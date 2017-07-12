@@ -41,7 +41,7 @@ const MyComponent = ({ onSubmit }) => (
 
 - `id`: PropTypes.string - ID used for remote controlling this field/form (`null` by default)
 - `instantUpdate`: PropTypes.bool - set `true` if you need instant relative field updating (`false` by default)
-- `isolated`: PropTypes.bool - set if you want to hold data hoisting to upper form (`false` by default)
+- `reinitialize`: PropTypes.bool - set `true` if you need reset value when initialValue are update (`false` by default)
 - `name`: PropTypes.string - need for data binding
 - `children`: PropTypes.oneOfType([ PropTypes.node, PropTypes.func ]).isRequired, - obviously, content of field/form
 - `strictTypes`: PropTypes.bool - insert checking of types (`true` by default)
