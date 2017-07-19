@@ -12,10 +12,6 @@
     "plugin:jsx-a11y/recommended"
   ],
   "globals": {
-    "__ASSERTS_ENABLED__": true,
-    "__HOT_RELOADING_ENABLED__": true,
-    "__SENTRY_DSN__": true,
-    "__APP_STAMP__": true,
     "process": true,
     "window": true
   },
