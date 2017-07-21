@@ -40,13 +40,14 @@ const MyComponent = ({ onSubmit }) => (
 ### FractalField `props`
 
 - `id`: PropTypes.string - ID used for remote controlling this field/form (`null` by default)
-- `instantUpdate`: PropTypes.bool - set `true` if you need instant relative field updating (`false` by default)
+- `pure`: PropTypes.bool - flag for optimize the re-rendering it depends only from state of form
 - `reinitialize`: PropTypes.bool - set `true` if you need reset value when initialValue are update (`false` by default)
 - `name`: PropTypes.string - need for data binding
 - `children`: PropTypes.oneOfType([ PropTypes.node, PropTypes.func ]).isRequired, - obviously, content of field/form
 - `strictTypes`: PropTypes.bool - insert checking of types (`true` by default)
 - `initialValue`: PropTypes.any - values that will be provided for child fields (useful only for forms)
 - `exception`: PropTypes.string - error message in case validate/normalize/format throws the error
+- `singleSubmit`: PropTypes.bool - reject the submtiing if first submit are active yet (promise has pending state)
 
 
 - `onChange`: PropTypes.func - handler that will be called on every field changes
@@ -61,7 +62,7 @@ const MyComponent = ({ onSubmit }) => (
 
 ### Control (children) `params`
 
-- `control: { value, onChange }` - shortcut for putting it into control component
+- `control: { value, onChange }` - shortcut for putting it into control component (only for components without children fractal-fields)
 - `triggerSubmit` - Function - call when you want to trigger submit, obvious
 - `triggerChange` - Function - call when you want to trigger change field by some case
 - `triggerReset` - Function - call when you want to trigger submit, obvious
@@ -69,12 +70,9 @@ const MyComponent = ({ onSubmit }) => (
 - `submitFailed` - Boolean - state of submitting
 - `submitting` - Boolean - state of submit processing. in pending (if onSubmit returns the Promise object)
 - `submitErrors` - Any - payload of submitting
-- `name` - String
 - `value` - Any
 - `touched` - Boolean - when form/field or child field was changed once
 - `submitted` - Boolean - when this form/field of parent was submitted once
-- `localError` - String - inner error (from preFormat)
-- `foreignError` - String - outer error (from normalize)
 - `valid` - Boolean - true if children and this field/form has no local/foreign errors
 - `error` - String - shortcut for local/foreign error
 
