@@ -46,7 +46,7 @@ const MyComponent = ({ onSubmit }) => (
 - `children`: PropTypes.oneOfType([ PropTypes.node, PropTypes.func ]).isRequired, - obviously, content of field/form
 - `strictTypes`: PropTypes.bool - insert checking of types (`true` by default)
 - `initialValue`: PropTypes.any - values that will be provided for child fields (useful only for forms)
-- `exceptionMessage`: PropTypes.string - error message in case validate/normalize/format throws the error
+- `exception`: PropTypes.string - error message in case validate/normalize/format throws the error
 
 
 - `onChange`: PropTypes.func - handler that will be called on every field changes
