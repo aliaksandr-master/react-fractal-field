@@ -74,14 +74,6 @@ config.plugins.push(new webpack.DefinePlugin({
 
 
 
-config.plugins.push(new webpack.optimize.DedupePlugin());
-
-
-
-config.plugins.push(new webpack.optimize.OccurenceOrderPlugin(true));
-
-
-
 config.resolve = {
   root: DIR_SRC,
   moduleDirectories: [ 'node_modules' ],
@@ -100,7 +92,6 @@ config.resolveLoader = {
 
 
 config.bail = true;
-config.devtool = null;
 config.cache = false;
 config.debug = false;
 config.watch = false;
