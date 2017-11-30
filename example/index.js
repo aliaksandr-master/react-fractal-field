@@ -1,18 +1,95 @@
+/* eslint-disable react/prop-types, react/jsx-no-bind, react/no-array-index-key, jsx-a11y/label-has-for */
+import React from 'react';
+import { render } from 'react-dom';
+import isNumber from 'lodash/isNumber';
+import isNil from 'lodash/isNil';
+import FractalField from '../lib';
 
 
 
-const ExampleBasicUsage = () => (
+const required = () => (value) => value ? null : 'required';
+const numberGTE = (max) => (value) => isNumber(value) && value >= max ? null : 'invalid max';
+const composeFilter = (...filters) => (value) => filters.reduce((value, filter) => filter(value), value);
+const toFloat = () => (value) => isNumber(value) ? value : parseFloat(value);
+const toFixed = (accuracy) => (value) => {
+  if (isNumber(value)) {
+    return value.toFixed(accuracy);
+  }
+
+  throw new Error('invalid');
+};
+
+const priceRemove = (currency) => (value) => {
+  return String(value).replace(`${currency} `, '');
+};
+
+const priceAdd = (currency) => (value) => {
+  return `${currency} ${value}`;
+};
+
+
+const FieldRadio = ({ children, ...props }) => (
+  <label>
+    <input {...props} type="radio" />
+    {children}
+  </label>
+);
+
+const defaults = (defaultValue, strict = true) => (value) => {
+  if (strict) {
+    if (value === undefined) {
+      return defaultValue;
+    }
+
+    return value;
+  }
+
+  if (isNil(value) || isNaN(value)) {
+    return defaultValue;
+  }
+
+  return value;
+};
+
+
+const Label = ({ children, ...props }) => (
+  <div {...props}><b>{children}</b></div>
+);
+
+const ErrorFieldNotice = ({ message }) => (
+  <div style={{ color: 'red' }}>
+    {Array.isArray(message) ? message[0] : message}
+  </div>
+);
+
+const FieldInput = () => (
+  <input type="text" />
+);
+
+const FieldCheckBox = ({ children, ...props }) => (
+  <label>
+    <input {...props} type="checkbox" />
+    {children}
+  </label>
+);
+
+const patternFloat = () => (value) => {
+
+};
+
+
+const ExampleBasicUsage = (props) => (
   <FractalField {...props} isolated>
-    {({ value, control, triggerSubmit, ...other }) => (
+    {({ value, triggerSubmit, control, ...other }) => (
       <div>
         <div style={{ background: other.valid ? 'green' : 'red', height: 40, marginBottom: 40 }} />
 
         <div style={{ overflow: 'hidden' }}>
           <div style={{ float: 'left', width: '48%' }}>
-            <Trace>{value}</Trace>
+            <pre>{JSON.stringify(value, null, 4)}</pre>
           </div>
           <div style={{ float: 'right', width: '48%' }}>
-            <Trace>{other}</Trace>
+            <pre>{JSON.stringify(other, null, 4)}</pre>
           </div>
         </div>
 
@@ -24,7 +101,7 @@ const ExampleBasicUsage = () => (
               {({ control, value, name, error }) => (
                 <div>
                   <Label>{name} (related)</Label>
-                  <Trace>{value}</Trace>
+                  <pre>{JSON.stringify(value, null, 4)}</pre>
                   <FieldRadio {...control} checked={control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
                   <FieldRadio {...control} checked={control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
                   <FieldRadio {...control} checked={control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
@@ -39,7 +116,7 @@ const ExampleBasicUsage = () => (
               {({ control, value, name, error }) => (
                 <div>
                   <Label>{name} (related)</Label>
-                  <Trace>{value}</Trace>
+                  <pre>{JSON.stringify(value, null, 4)}</pre>
                   <FieldRadio {...control} checked={control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
                   <FieldRadio {...control} checked={control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
                   <FieldRadio {...control} checked={control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
@@ -54,14 +131,14 @@ const ExampleBasicUsage = () => (
               {({ value, name, error }) => (
                 <div>
                   <Label>{name}</Label>
-                  <Trace>{value}</Trace>
+                  <pre>{JSON.stringify(value, null, 4)}</pre>
 
                   <div style={{ paddingLeft: 30 }}>
                     <FractalField name="nested_field_text">
                       {({ control, value, name, error }) => (
                         <div>
                           <Label>{name}</Label>
-                          <Trace>{value}</Trace>
+                          <pre>{JSON.stringify(value, null, 4)}</pre>
                           <FieldInput {...control} />
                           <ErrorFieldNotice message={error} />
                         </div>
@@ -73,7 +150,7 @@ const ExampleBasicUsage = () => (
                       {({ control, value, name, error }) => (
                         <div>
                           <Label>{name}</Label>
-                          <Trace>{value}</Trace>
+                          <pre>{JSON.stringify(value, null, 4)}</pre>
                           <FieldCheckBox {...control} checked={Boolean(value)}>{name}</FieldCheckBox>
                           <ErrorFieldNotice message={error} />
                         </div>
@@ -97,7 +174,7 @@ const ExampleBasicUsage = () => (
               {({ control, value, name, error, $state }) => (
                 <div>
                   <Label>{name}</Label>
-                  <Trace>{$state}</Trace>
+                  <pre>{JSON.stringify($state, null, 4)}</pre>
                   <FieldInput {...control} checked={Boolean(value)} />
                   <ErrorFieldNotice message={error} />
                 </div>
@@ -118,7 +195,7 @@ const ExampleBasicUsage = () => (
               {({ control, value, name, error, $state }) => (
                 <div>
                   <Label>{name}</Label>
-                  <Trace>{$state}</Trace>
+                  <pre>{JSON.stringify($state, null, 4)}</pre>
                   <FieldInput {...control} checked={Boolean(value)} />
                   <ErrorFieldNotice message={error} />
                 </div>
@@ -129,10 +206,10 @@ const ExampleBasicUsage = () => (
             <br />
 
             <FractalField name="array_fields">
-              {({ triggerChange, control, value, name, error, $state }) => (
+              {({ triggerChange, value, name, error, $state }) => (
                 <div style={{ paddingLeft: 10, paddingRight: 10, border: '1px solid #aaa' }}>
                   <Label>{name}</Label>
-                  <Trace>{$state}</Trace>
+                  <pre>{JSON.stringify($state, null, 4)}</pre>
                   <div>
                     {(value || []).map((item, index) => {
                       const listValue = value;
@@ -140,17 +217,17 @@ const ExampleBasicUsage = () => (
 
                       return (
                         <FractalField key={index} name={`[${index}]`}>
-                          {({ control, value, name, valid, error, $state }) => (
+                          {({ value, name, valid, error, $state }) => (
                             <div style={{ padding: 10, marginLeft: 30, border: '1px solid #777', marginTop: 10, marginBottom: 10 }}>
                               <Label>{name}</Label>
-                              <Trace>{$state}</Trace>
+                              <pre>{JSON.stringify($state, null, 4)}</pre>
 
                               <div style={{ marginLeft: 50 }}>
                                 <FractalField name="array_fields_item_number" format={parseFloat} normalize={parseFloat}>
                                   {({ control, value, name, valid, error, $state }) => (
                                     <div>
                                       <Label>{name}</Label>
-                                      <Trace>{$state}</Trace>
+                                      <pre>{JSON.stringify($state, null, 4)}</pre>
                                       <FieldInput type="number" {...control} />
                                       <ErrorFieldNotice message={error} />
                                     </div>
@@ -160,7 +237,7 @@ const ExampleBasicUsage = () => (
                                   {({ control, value, name, error, $state }) => (
                                     <div>
                                       <Label>{name}</Label>
-                                      <Trace>{$state}</Trace>
+                                      <pre>{JSON.stringify($state, null, 4)}</pre>
                                       <FieldInput {...control} />
                                       <ErrorFieldNotice message={error} />
                                     </div>
@@ -187,4 +264,15 @@ const ExampleBasicUsage = () => (
       </div>
     )}
   </FractalField>
+);
+
+const el = window.document.createElement('div');
+
+window.document.body.appendChild(el);
+
+render(
+  <div style={{ fontSize: 10, fontFamily: 'monospace' }}>
+    <ExampleBasicUsage />
+  </div>,
+  el
 );

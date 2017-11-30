@@ -5,13 +5,10 @@ const webpack = require('webpack');
 
 
 const DIR_SRC = 'lib';
-const NODE_ENV = process.env.NODE_ENV || 'production'; // eslint-disable-line
-const DIR_BABEL_CACHE_DIR = path.resolve(__dirname, '.tmp/babel');
-
+const NODE_ENV = process.env.NODE_ENV || 'development'; // eslint-disable-line
 
 
 const config = {};
-
 
 
 config.output = {
@@ -21,51 +18,38 @@ config.output = {
 };
 
 
-
-
 config.entry = {
-  'react-composite-router': [
+  'react-fractal-field': [
     path.join(__dirname, DIR_SRC, 'index.js')
+  ],
+  'react-fractal-field-demo': [
+    path.join(__dirname, 'example', 'index.js')
   ]
 };
 
 
-
-config.externals = {
-};
-
+config.externals = {};
 
 
 config.module = {};
 
 
-
-
-config.module.noParse = [
-];
-
-
-
-config.module.loaders = [
+config.module.rules = [
   {
     test: /\.(?:jsx?)(?:\?.*)?$/i,
-    exclude: [
-    ],
-    loaders: [
-      `babel?cacheDirectory=${DIR_BABEL_CACHE_DIR}`
-    ]
+    use: {
+      loader: 'babel-loader'
+    }
   }
 ];
-
-
 
 
 config.plugins = [];
 
 
-
-config.plugins.push(new webpack.NoErrorsPlugin());
-
+config.plugins.push(new webpack.LoaderOptionsPlugin({
+  debug: true
+}));
 
 
 config.plugins.push(new webpack.DefinePlugin({
@@ -73,30 +57,25 @@ config.plugins.push(new webpack.DefinePlugin({
 }));
 
 
-
 config.resolve = {
   root: DIR_SRC,
-  moduleDirectories: [ 'node_modules' ],
   extensions: [ '', '.js' ],
   alias: {}
 };
 
 
-
-config.resolveLoader = {
-  alias: {}
+config.resolve = {
+  modules: [
+    path.join(__dirname, 'lib'),
+    'node_modules'
+  ],
+  extensions: [ '.js' ]
 };
-
-
-
 
 
 config.bail = true;
 config.cache = false;
-config.debug = false;
 config.watch = false;
-
-
 config.context = __dirname;
 config.node = {
   __filename: true
