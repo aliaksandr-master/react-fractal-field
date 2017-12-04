@@ -180,8 +180,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                 <FractalField name="main_radio">
                   {({ value, ...other }) => (
                     <div>
-                      {this.DDInfo('[main_radio] 1 (related) VALUE:', value)}
-                      {this.DDInfo('[main_radio] 1 (related) OTHER:', other)}
+                      {this.DDInfo('[main_radio] 1 (related):', value)}
                       <FieldRadio valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
                       <FieldRadio valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
                       <FieldRadio valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
@@ -193,12 +192,12 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                 <br />
 
                 <FractalField name="main_radio">
-                  {({ control, value, error }) => (
+                  {({ value, error, ...other }) => (
                     <div>
                       {this.DDInfo('[main_radio] 2 (related):', value)}
-                      <FieldRadio valid={other.valid} error={other.error} {...control} checked={control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
-                      <FieldRadio valid={other.valid} error={other.error} {...control} checked={control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
-                      <FieldRadio valid={other.valid} error={other.error} {...control} checked={control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
+                      <FieldRadio valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
+                      <FieldRadio valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
+                      <FieldRadio valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
                     </div>
                   )}
                 </FractalField>
@@ -301,7 +300,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                                   <ErrorBlock valid={valid} error={error} />
 
                                   <div style={{ marginLeft: 50 }}>
-                                    <FractalField name="array_fields_item_number" format={parseFloat} normalize={parseFloat}>
+                                    <FractalField name="array_fields_item_number" format={parseFloat} normalize={parseFloat} validate={required()}>
                                       {({ control, value, valid, error, $state }) => (
                                         <div>
                                           {this.DDInfo(`array_fields[${index}].array_fields_item_number:`, value)}
@@ -326,7 +325,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                           );
                         })}
                         <br />
-                        <button onClick={() => triggerChange([ ...(value || []), { array_fields_item_number: 3, array_fields_item_text: 'param pam pam' } ])}>Add one</button>
+                        <button onClick={() => triggerChange([ ...(value || []), { array_fields_item_number: value && value.length ? 0 : undefined, array_fields_item_text: 'param pam pam' } ])}>Add one</button>
                       </div>
                     </div>
                   )}
