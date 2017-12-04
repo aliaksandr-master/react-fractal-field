@@ -68,6 +68,7 @@
     "react": "15.6.1",
     "react-addons-test-utils": "15.6.0",
     "react-dom": "^15.6.1",
+    "react-json-view": "^1.13.3",
     "react-redux": "5.0.2",
     "react-test-renderer": "15.6.1",
     "react-with-context": "1.2.1",
