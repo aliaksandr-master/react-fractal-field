@@ -62,7 +62,7 @@ const defaults = (defaultValue, strict = true) => (value) => {
 
 
 // validators
-const required = () => (value) => !isNil(value) && value !== '' ? null : 'required';
+const required = () => (value) => isNil(value) || isNaN(value) || value === '' ? 'required' : null;
 
 const numberGTE = (max) => (value) => isNumber(value) && value >= max ? null : `need to be > ${max}`;
 
