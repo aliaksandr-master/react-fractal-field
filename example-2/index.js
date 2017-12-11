@@ -6,10 +6,9 @@ import isNil from 'lodash/isNil';
 import isNaN from 'lodash/isNaN';
 import isPlainObject from 'lodash/isPlainObject';
 import ReactJson from 'react-json-view';
-import FractalForm from '../lib/FractalForm';
-import FractalFieldSet from '../lib/FractalFieldSet';
-import FractalFieldList from '../lib/FractalFieldList';
-import FractalControl from '../lib/FractalControl';
+import FieldSet from '../lib/FieldSet';
+import FieldList from '../lib/FieldList';
+import Field from '../lib/Field';
 
 
 
@@ -79,7 +78,7 @@ const omitControl = (data) => Object.keys(data).filter((k) => k !== 'control').r
 
 
 // components
-const ErrorBlock = ({ children, valid, error, style = {} }) => {
+const ErrorBlock = ({ children, valid, error, hasException, style = {} }) => {
   valid = !error && valid;
 
   return (
@@ -89,15 +88,15 @@ const ErrorBlock = ({ children, valid, error, style = {} }) => {
       </div>
       {error && (
         <div style={{ color: 'red' }}>
-          error: {Array.isArray(error) ? error[0] : error}
+          {hasException ? 'exception' : 'error'}: {Array.isArray(error) ? error[0] : error}
         </div>
       )}
     </div>
   );
 };
 
-const FieldRadio = ({ valid, error, children, ...props }) => (
-  <ErrorBlock error={error} valid={valid}>
+const FieldRadio = ({ valid, error, hasException, children, ...props }) => (
+  <ErrorBlock error={error} valid={valid} hasException={hasException}>
     <label>
       <input {...props} type="radio" />
       {children}
@@ -105,14 +104,14 @@ const FieldRadio = ({ valid, error, children, ...props }) => (
   </ErrorBlock>
 );
 
-const FieldInput = ({ error, valid, ...props }) => (
-  <ErrorBlock error={error} valid={valid}>
+const FieldInput = ({ error, valid, hasException, ...props }) => (
+  <ErrorBlock error={error} valid={valid} hasException={hasException}>
     <input type="text" {...props} />
   </ErrorBlock>
 );
 
-const FieldCheckBox = ({ error, valid, children, ...props }) => (
-  <ErrorBlock error={error} valid={valid}>
+const FieldCheckBox = ({ error, valid, children, hasException, ...props }) => (
+  <ErrorBlock error={error} valid={valid} hasException={hasException}>
     <label>
       <input {...props} type="checkbox" />
       {children}
@@ -166,10 +165,10 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
   render () {
     /*eslint-disable react/jsx-handler-names*/
     return (
-      <FractalForm {...this.props}>
-        {({ value, ...other }) => (
+      <FieldSet {...this.props}>
+        {({ value, hasException, ...other }) => (
           <div>
-            <ErrorBlock error={other.error} valid={other.valid} />
+            <ErrorBlock hasException={hasException} error={other.error} valid={other.valid} />
 
             <div style={{ overflow: 'hidden' }}>
               {this.DDInfo('Main value', value, { style: { float: 'left', width: '48%' } })}
@@ -180,122 +179,116 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
 
             <div style={{ overflow: 'hidden', padding: 20 }}>
               <div style={{ float: 'left', width: '48%' }}>
-                <FractalControl name="main_radio">
-                  {({ value, ...other }) => (
+                <Field name="main_radio">
+                  {({ value, hasException, ...other }) => (
                     <div>
                       {this.DDInfo('[main_radio] 1 (related):', value)}
-                      <FieldRadio valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
-                      <FieldRadio valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
-                      <FieldRadio valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
+                      <FieldRadio hasException={hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
+                      <FieldRadio hasException={hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
+                      <FieldRadio hasException={hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
                     </div>
                   )}
-                </FractalControl>
+                </Field>
 
                 <br />
                 <br />
 
-                <FractalControl name="main_radio">
-                  {({ value, error, ...other }) => (
+                <Field name="main_radio">
+                  {({ value, error, hasException, ...other }) => (
                     <div>
                       {this.DDInfo('[main_radio] 2 (related):', value)}
-                      <FieldRadio valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
-                      <FieldRadio valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
-                      <FieldRadio valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
+                      <FieldRadio hasException={hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
+                      <FieldRadio hasException={hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
+                      <FieldRadio hasException={hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
                     </div>
                   )}
-                </FractalControl>
+                </Field>
 
                 <br />
                 <br />
 
-                <FractalFieldSet name="nested_fields" validate={() => value && value.main_radio === 'some-1' ? undefined : 'main_radio must be "some-1" only!'}>
-                  {({ value, error, valid }) => (
+                <FieldSet name="nested_fields" validate={() => value && value.main_radio === 'some-1' ? undefined : 'main_radio must be "some-1" only!'}>
+                  {({ value, error, valid, hasException }) => (
                     <div>
                       {this.DDInfo('[nested_fields]:', value)}
 
-                      <ErrorBlock valid={valid} error={error} />
+                      <ErrorBlock hasException={hasException} valid={valid} error={error} />
 
                       <div style={{ paddingLeft: 30 }}>
-                        <FractalControl name="nested_field_text">
-                          {({ control, value, ...other }) => (
+                        <Field name="nested_field_text">
+                          {({ control, value, hasException, ...other }) => (
                             <div>
                               {this.DDInfo('[nested_field_text]:', value)}
-                              <FieldInput valid={other.valid} error={other.error} {...control} />
+                              <FieldInput hasException={hasException} valid={other.valid} error={other.error} {...control} />
                             </div>
                           )}
-                        </FractalControl>
+                        </Field>
 
                         <br />
                         <br />
 
-                        <FractalControl name="nested_field_bool">
-                          {({ control, value, ...other }) => (
+                        <Field name="nested_field_bool">
+                          {({ control, value, hasException, ...other }) => (
                             <div>
                               {this.DDInfo('[nested_field_bool]:', value)}
-                              <FieldCheckBox valid={other.valid} error={other.error} {...control} checked={Boolean(value)}>nested_field_bool</FieldCheckBox>
+                              <FieldCheckBox hasException={hasException} valid={other.valid} error={other.error} {...control} checked={Boolean(value)}>nested_field_bool</FieldCheckBox>
                             </div>
                           )}
-                        </FractalControl>
+                        </Field>
                       </div>
                     </div>
                   )}
-                </FractalFieldSet>
+                </FieldSet>
               </div>
 
               <div style={{ float: 'right', width: '48%' }}>
-                <FractalControl
+                <Field
                   name="price"
                   validate={[ required(), numberGTE(3) ]}
                   normalize={composeFilter(priceRemove('USD'), toFloat())}
                   format={composeFilter(defaults(0, false), toFixed(2), priceAdd('USD'))}
                 >
-                  {({ control, value, error, valid, $state }) => (
+                  {({ control, value, error, valid, hasException, $state }) => (
                     <div>
                       {this.DDInfo('[price]:', value)}
-                      <FieldInput valid={valid} error={error} {...control} />
+                      <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
                     </div>
                   )}
-                </FractalControl>
+                </Field>
 
                 <br />
                 <br />
 
-                <FractalControl
+                <Field
                   name="price2"
                   validate={[ required(), numberGTE(3) ]}
                 >
                   {({ triggerChange }) => (
-                    <FractalForm
+                    <Field
                       onChange={() => triggerChange()}
-                      bubbling="validity,touching,activity,submitting,value"
                       validate={[ (value) => patternFloat()(priceRemove('USD')(value)) ]}
+                      normalize={composeFilter(priceRemove('USD'), toFloat())}
+                      format={composeFilter(defaults(0, false), toFixed(2), priceAdd('USD'))}
                     >
-                      {() => (
-                        <FractalControl
-                          normalize={composeFilter(priceRemove('USD'), toFloat())}
-                          format={composeFilter(defaults(0, false), toFixed(2), priceAdd('USD'))}
-                        >
-                          {({ control, value, error, valid, $state }) => (
-                            <div>
-                              {this.DDInfo('price2:', value)}
-                              <FieldInput valid={valid} error={error} {...control} />
-                            </div>
-                          )}
-                        </FractalControl>
+                      {({ control, value, error, valid, hasException, $state }) => (
+                        <div>
+                          {this.DDInfo('price2:', value)}
+                          <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
+                        </div>
                       )}
-                    </FractalForm>
+                    </Field>
                   )}
-                </FractalControl>
+                </Field>
 
                 <br />
                 <br />
 
-                <FractalFieldList name="array_fields">
-                  {({ triggerChange, value, error, valid, $state, items }) => (
+                <FieldList name="array_fields">
+                  {({ triggerChange, value, error, hasException, valid, $state, items }) => (
                     <div style={{ paddingLeft: 10, paddingRight: 10, border: '1px solid #aaa' }}>
                       {this.DDInfo('[array_fields]:', value)}
 
-                      <ErrorBlock valid={valid} error={error} />
+                      <ErrorBlock hasException={hasException} valid={valid} error={error} />
 
                       <div>
                         {items.map((item, index) => {
@@ -303,36 +296,36 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                           const listOnChange = triggerChange;
 
                           return (
-                            <FractalFieldSet key={index} name={index}>
-                              {({ value, valid, error, $state }) => (
+                            <FieldSet key={index} name={index}>
+                              {({ value, valid, error, hasException, $state }) => (
                                 <div style={{ padding: 10, marginLeft: 30, border: '1px solid #777', marginTop: 10, marginBottom: 10 }}>
                                   {this.DDInfo(`array_fields[${index}]:`, value)}
 
-                                  <ErrorBlock valid={valid} error={error} />
+                                  <ErrorBlock hasException={hasException} valid={valid} error={error} />
 
                                   <div style={{ marginLeft: 50 }}>
-                                    <FractalControl name="array_fields_item_number" format={parseFloat} normalize={parseFloat} validate={required()}>
-                                      {({ control, value, valid, error, $state }) => (
+                                    <Field name="array_fields_item_number" format={parseFloat} normalize={parseFloat} validate={required()}>
+                                      {({ control, value, valid, error, hasException, $state }) => (
                                         <div>
                                           {this.DDInfo(`array_fields[${index}].array_fields_item_number:`, value)}
-                                          <FieldInput valid={valid} error={error} type="number" {...control} />
+                                          <FieldInput hasException={hasException} valid={valid} error={error} type="number" {...control} />
                                         </div>
                                       )}
-                                    </FractalControl>
-                                    <FractalControl name="array_fields_item_text">
-                                      {({ control, value, valid, error, $state }) => (
+                                    </Field>
+                                    <Field name="array_fields_item_text">
+                                      {({ control, value, valid, error, hasException, $state }) => (
                                         <div>
                                           {this.DDInfo(`array_fields[${index}].array_fields_item_text:`, value)}
-                                          <FieldInput valid={valid} error={error} {...control} />
+                                          <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
                                         </div>
                                       )}
-                                    </FractalControl>
+                                    </Field>
                                   </div>
 
                                   <button onClick={() => items.remove(index)}>remove this</button>
                                 </div>
                               )}
-                            </FractalFieldSet>
+                            </FieldSet>
                           );
                         })}
                         <br />
@@ -340,12 +333,12 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                       </div>
                     </div>
                   )}
-                </FractalFieldList>
+                </FieldList>
               </div>
             </div>
           </div>
         )}
-      </FractalForm>
+      </FieldSet>
     );
   }
 };
