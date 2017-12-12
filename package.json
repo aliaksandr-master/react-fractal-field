@@ -4,6 +4,7 @@
   "description": "predictable react router",
   "main": "lib/index.js",
   "scripts": {
+    "start": "webpack --watch",
     "cleanup": "npm prune && npm i && npm dedupe",
     "precommit": "npm test",
     "prepush": "npm test",
