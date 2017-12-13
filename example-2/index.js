@@ -13,7 +13,7 @@ import Field from '../lib/components/Field';
 
 
 // filters
-const composeFilter = (...filters) => (value) => filters.reduce((value, filter) => filter(value), value);
+const composeFilter = (...filters) => (value) => filters.reduce((result, filter) => filter(result), value);
 
 const priceRemove = (currency) => (value) => {
   let tmp = value;
@@ -35,7 +35,19 @@ const priceAdd = (currency) => (value) => {
   return `${currency} ${String(priceRemove(currency)(value))}`;
 };
 
-const toFloat = () => (value) => isNumber(value) ? value : parseFloat(value || '');
+const toFloat = () => (value) => {
+  if (isNumber(value)) {
+    return value;
+  }
+
+  const number = parseFloat(String(value || ''));
+
+  if (isNaN(number)) {
+    return 0;
+  }
+
+  return number;
+};
 
 const toFixed = (accuracy) => (value) => {
   if (isNumber(value)) {
@@ -69,11 +81,6 @@ const required = () => (value) => isNil(value) || isNaN(value) || value === '' ?
 const numberGTE = (max) => (value) => isNumber(value) && value >= max ? null : `need to be > ${max}`;
 
 const patternFloat = () => (value) => /^\d+.?\d*$/.test(value) ? null : 'invalid format';
-
-
-
-// helpers
-const omitControl = (data) => Object.keys(data).filter((k) => k !== 'control').reduce((v, k) => ({ ...v, [k]: data[k] }), {});
 
 
 
@@ -127,14 +134,14 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
     };
   }
 
-  DDInfo (label, data, props = {}) {
+  DDInfo (label, data, open = false) {
     return (
-      <div {...props}>
+      <div>
         <div><b>{label}</b></div>
         <div style={{ paddingBottom: 20 }}>
           {Array.isArray(data) || isPlainObject(data)
             ? (
-              <ReactJson enableClipboard={false} collapsed name={false} src={data} />
+              <ReactJson enableClipboard={false} collapsed={!open} name={false} src={data} />
             ) : (
               <div style={{ minHeight: 14 }}>
                 {data === undefined
@@ -165,14 +172,19 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
   render () {
     /*eslint-disable react/jsx-handler-names*/
     return (
-      <FieldSet debug {...this.props}>
-        {({ value, hasException, ...other }) => (
-          <div>
-            <ErrorBlock hasException={hasException} error={other.error} valid={other.valid} />
+      <FieldSet {...this.props}>
+        {({ value, $state, ...other }) => (
+          <form onSubmit={other.triggerSubmit}>
+            <ErrorBlock hasException={other.hasException} error={other.error} valid={other.valid} />
 
             <div style={{ overflow: 'hidden' }}>
-              {this.DDInfo('Main value', value, { style: { float: 'left', width: '48%' } })}
-              {this.DDInfo('Main other', omitControl(other), { style: { float: 'right', width: '48%' } })}
+              <div style={{ float: 'left', width: '48%' }}>
+                {this.DDInfo('FORM value', value, true)}
+              </div>
+              <div style={{ float: 'right', width: '48%' }}>
+                {this.DDInfo('FORM meta', other, true)}
+                {this.DDInfo('FORM $state', $state)}
+              </div>
             </div>
 
             <button type="button" onClick={other.triggerSubmit}>Submit!</button>
@@ -180,12 +192,12 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
             <div style={{ overflow: 'hidden', padding: 20 }}>
               <div style={{ float: 'left', width: '48%' }}>
                 <Field name="main_radio" id="main_radio">
-                  {({ value, hasException, ...other }) => (
+                  {({ value, ...other }) => (
                     <div>
                       {this.DDInfo('[main_radio] 1 (related):', value)}
-                      <FieldRadio hasException={hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
-                      <FieldRadio hasException={hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
-                      <FieldRadio hasException={hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
+                      <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
+                      <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
+                      <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
                     </div>
                   )}
                 </Field>
@@ -194,12 +206,12 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                 <br />
 
                 <Field name="main_radio" id="main_radio">
-                  {({ value, error, hasException, ...other }) => (
+                  {({ value, error, ...other }) => (
                     <div>
                       {this.DDInfo('[main_radio] 2 (related):', value)}
-                      <FieldRadio hasException={hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
-                      <FieldRadio hasException={hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
-                      <FieldRadio hasException={hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
+                      <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
+                      <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
+                      <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
                     </div>
                   )}
                 </Field>
@@ -215,7 +227,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                       <ErrorBlock hasException={hasException} valid={valid} error={error} />
 
                       <div style={{ paddingLeft: 30 }}>
-                        <Field name="nested_field_text">
+                        <Field preferState name="nested_field_text">
                           {({ control, value, hasException, ...other }) => (
                             <div>
                               {this.DDInfo('[nested_field_text]:', value)}
@@ -228,10 +240,10 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                         <br />
 
                         <Field name="nested_field_bool">
-                          {({ control, value, hasException, ...other }) => (
+                          {({ control, value, ...other }) => (
                             <div>
                               {this.DDInfo('[nested_field_bool]:', value)}
-                              <FieldCheckBox hasException={hasException} valid={other.valid} error={other.error} {...control} checked={Boolean(value)}>nested_field_bool</FieldCheckBox>
+                              <FieldCheckBox hasException={other.hasException} valid={other.valid} error={other.error} {...control} checked={Boolean(value)}>nested_field_bool</FieldCheckBox>
                             </div>
                           )}
                         </Field>
@@ -243,14 +255,13 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
 
               <div style={{ float: 'right', width: '48%' }}>
                 <Field
-                  name="price"
+                  name="value"
                   validate={[ required(), numberGTE(3) ]}
-                  normalize={composeFilter(priceRemove('USD'), toFloat())}
-                  format={composeFilter(defaults(0, false), toFixed(2), priceAdd('USD'))}
+                  normalize={toFloat()}
                 >
                   {({ control, value, error, valid, hasException, $state }) => (
                     <div>
-                      {this.DDInfo('[price]:', value)}
+                      {this.DDInfo('[value]:', value)}
                       <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
                     </div>
                   )}
@@ -260,11 +271,12 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                 <br />
 
                 <Field
-                  name="price2"
+                  name="price"
                   validate={[ required(), numberGTE(3) ]}
                 >
                   {({ triggerChange }) => (
                     <Field
+                      preferState
                       onChange={() => triggerChange()}
                       validate={[ (value) => patternFloat()(priceRemove('USD')(value)) ]}
                       normalize={composeFilter(priceRemove('USD'), toFloat())}
@@ -336,7 +348,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                 </FieldList>
               </div>
             </div>
-          </div>
+          </form>
         )}
       </FieldSet>
     );
