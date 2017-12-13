@@ -165,7 +165,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
   render () {
     /*eslint-disable react/jsx-handler-names*/
     return (
-      <FieldSet {...this.props}>
+      <FieldSet debug {...this.props}>
         {({ value, hasException, ...other }) => (
           <div>
             <ErrorBlock hasException={hasException} error={other.error} valid={other.valid} />
@@ -179,7 +179,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
 
             <div style={{ overflow: 'hidden', padding: 20 }}>
               <div style={{ float: 'left', width: '48%' }}>
-                <Field name="main_radio">
+                <Field name="main_radio" id="main_radio">
                   {({ value, hasException, ...other }) => (
                     <div>
                       {this.DDInfo('[main_radio] 1 (related):', value)}
@@ -193,7 +193,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                 <br />
                 <br />
 
-                <Field name="main_radio">
+                <Field name="main_radio" id="main_radio">
                   {({ value, error, hasException, ...other }) => (
                     <div>
                       {this.DDInfo('[main_radio] 2 (related):', value)}
