@@ -83,6 +83,10 @@ const numberGTE = (max) => (value) => isNumber(value) && value >= max ? null : `
 const patternFloat = () => (value) => /^\d+.?\d*$/.test(value) ? null : 'invalid format';
 
 
+const Wrapper = ({ children }) => (
+  <div style={{ border: '1px solid #aaa', padding: '10px', margin: '20px 0 0 20px' }}>{children}</div>
+);
+
 
 // components
 const ErrorBlock = ({ children, valid, error, hasException, style = {} }) => {
@@ -93,9 +97,9 @@ const ErrorBlock = ({ children, valid, error, hasException, style = {} }) => {
       <div style={{ background: !valid ? 'red' : 'green', padding: 2, minHeight: 20, ...style }}>
         {children || (<div style={{ lineHeight: '20px', color: 'white', textAlign: 'center' }}>{!valid ? 'INVALID' : 'VALID'}</div>)}
       </div>
-      {error && (
+      {(error || hasException) && (
         <div style={{ color: 'red' }}>
-          {hasException ? 'exception' : 'error'}: {Array.isArray(error) ? error[0] : error}
+          {hasException ? 'exception' : 'error'}: {error && (Array.isArray(error) ? error[0] : error)}
         </div>
       )}
     </div>
@@ -172,7 +176,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
   render () {
     /*eslint-disable react/jsx-handler-names*/
     return (
-      <FieldSet {...this.props}>
+      <FieldSet debug {...this.props}>
         {({ value, $state, ...other }) => (
           <form onSubmit={other.triggerSubmit}>
             <ErrorBlock hasException={other.hasException} error={other.error} valid={other.valid} />
@@ -193,12 +197,12 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
               <div style={{ float: 'left', width: '48%' }}>
                 <Field name="main_radio" id="main_radio">
                   {({ value, ...other }) => (
-                    <div>
+                    <Wrapper>
                       {this.DDInfo('[main_radio] 1 (related):', value)}
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
-                    </div>
+                    </Wrapper>
                   )}
                 </Field>
 
@@ -207,12 +211,12 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
 
                 <Field name="main_radio" id="main_radio">
                   {({ value, error, ...other }) => (
-                    <div>
+                    <Wrapper>
                       {this.DDInfo('[main_radio] 2 (related):', value)}
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
-                    </div>
+                    </Wrapper>
                   )}
                 </Field>
 
@@ -221,18 +225,18 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
 
                 <FieldSet name="nested_fields" validate={() => value && value.main_radio === 'some-1' ? undefined : 'main_radio must be "some-1" only!'}>
                   {({ value, error, valid, hasException }) => (
-                    <div>
+                    <Wrapper>
                       {this.DDInfo('[nested_fields]:', value)}
 
                       <ErrorBlock hasException={hasException} valid={valid} error={error} />
 
-                      <div style={{ paddingLeft: 30 }}>
+                      <div>
                         <Field preferState name="nested_field_text">
                           {({ control, value, hasException, ...other }) => (
-                            <div>
+                            <Wrapper>
                               {this.DDInfo('[nested_field_text]:', value)}
                               <FieldInput hasException={hasException} valid={other.valid} error={other.error} {...control} />
-                            </div>
+                            </Wrapper>
                           )}
                         </Field>
 
@@ -241,14 +245,14 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
 
                         <Field name="nested_field_bool">
                           {({ control, value, ...other }) => (
-                            <div>
+                            <Wrapper>
                               {this.DDInfo('[nested_field_bool]:', value)}
                               <FieldCheckBox hasException={other.hasException} valid={other.valid} error={other.error} {...control} checked={Boolean(value)}>nested_field_bool</FieldCheckBox>
-                            </div>
+                            </Wrapper>
                           )}
                         </Field>
                       </div>
-                    </div>
+                    </Wrapper>
                   )}
                 </FieldSet>
               </div>
@@ -260,10 +264,10 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                   normalize={toFloat()}
                 >
                   {({ control, value, error, valid, hasException, $state }) => (
-                    <div>
+                    <Wrapper>
                       {this.DDInfo('[value]:', value)}
                       <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
-                    </div>
+                    </Wrapper>
                   )}
                 </Field>
 
@@ -274,21 +278,25 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                   name="price"
                   validate={[ required(), numberGTE(3) ]}
                 >
-                  {({ triggerChange }) => (
-                    <Field
-                      preferState
-                      onChange={() => triggerChange()}
-                      validate={[ (value) => patternFloat()(priceRemove('USD')(value)) ]}
-                      normalize={composeFilter(priceRemove('USD'), toFloat())}
-                      format={composeFilter(defaults(0, false), toFixed(2), priceAdd('USD'))}
-                    >
-                      {({ control, value, error, valid, hasException, $state }) => (
-                        <div>
-                          {this.DDInfo('price2:', value)}
-                          <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
-                        </div>
-                      )}
-                    </Field>
+                  {({ triggerChange, hasException, valid, error, value }) => (
+                    <Wrapper>
+                      {this.DDInfo('price2:', value)}
+                      <ErrorBlock hasException={hasException} valid={valid} error={error} />
+                      <Field
+                        preferState
+                        onChange={(value) => triggerChange(value)}
+                        validate={[ (value) => patternFloat()(priceRemove('USD')(value)) ]}
+                        normalize={composeFilter(priceRemove('USD'), toFloat())}
+                        format={composeFilter(toFixed(2), priceAdd('USD'))}
+                      >
+                        {({ control, value, error, valid, hasException, $state }) => (
+                          <Wrapper>
+                            {this.DDInfo('price2 INNER:', value)}
+                            <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
+                          </Wrapper>
+                        )}
+                      </Field>
+                    </Wrapper>
                   )}
                 </Field>
 
@@ -297,53 +305,47 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
 
                 <FieldList name="array_fields">
                   {({ triggerChange, value, error, hasException, valid, $state, items }) => (
-                    <div style={{ paddingLeft: 10, paddingRight: 10, border: '1px solid #aaa' }}>
+                    <Wrapper>
                       {this.DDInfo('[array_fields]:', value)}
 
                       <ErrorBlock hasException={hasException} valid={valid} error={error} />
 
-                      <div>
-                        {items.map((item, index) => {
-                          const listValue = value;
-                          const listOnChange = triggerChange;
+                      {items.map((item, index) => (
+                        <FieldSet key={index} name={index}>
+                          {({ value, valid, error, hasException, $state }) => (
+                            <Wrapper>
+                              {this.DDInfo(`array_fields[${index}]:`, value)}
 
-                          return (
-                            <FieldSet key={index} name={index}>
-                              {({ value, valid, error, hasException, $state }) => (
-                                <div style={{ padding: 10, marginLeft: 30, border: '1px solid #777', marginTop: 10, marginBottom: 10 }}>
-                                  {this.DDInfo(`array_fields[${index}]:`, value)}
+                              <ErrorBlock hasException={hasException} valid={valid} error={error} />
 
-                                  <ErrorBlock hasException={hasException} valid={valid} error={error} />
+                              <div>
+                                <Field name="array_fields_item_number" format={parseFloat} normalize={parseFloat} validate={required()}>
+                                  {({ control, value, valid, error, hasException, $state }) => (
+                                    <Wrapper>
+                                      {this.DDInfo(`array_fields[${index}].array_fields_item_number:`, value)}
+                                      <FieldInput hasException={hasException} valid={valid} error={error} type="number" {...control} />
+                                    </Wrapper>
+                                  )}
+                                </Field>
 
-                                  <div style={{ marginLeft: 50 }}>
-                                    <Field name="array_fields_item_number" format={parseFloat} normalize={parseFloat} validate={required()}>
-                                      {({ control, value, valid, error, hasException, $state }) => (
-                                        <div>
-                                          {this.DDInfo(`array_fields[${index}].array_fields_item_number:`, value)}
-                                          <FieldInput hasException={hasException} valid={valid} error={error} type="number" {...control} />
-                                        </div>
-                                      )}
-                                    </Field>
-                                    <Field name="array_fields_item_text">
-                                      {({ control, value, valid, error, hasException, $state }) => (
-                                        <div>
-                                          {this.DDInfo(`array_fields[${index}].array_fields_item_text:`, value)}
-                                          <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
-                                        </div>
-                                      )}
-                                    </Field>
-                                  </div>
+                                <Field name="array_fields_item_text">
+                                  {({ control, value, valid, error, hasException, $state }) => (
+                                    <Wrapper>
+                                      {this.DDInfo(`array_fields[${index}].array_fields_item_text:`, value)}
+                                      <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
+                                    </Wrapper>
+                                  )}
+                                </Field>
+                              </div>
 
-                                  <button onClick={() => items.remove(index)}>remove this</button>
-                                </div>
-                              )}
-                            </FieldSet>
-                          );
-                        })}
-                        <br />
-                        <button onClick={() => items.append({ array_fields_item_number: value && value.length ? 0 : undefined, array_fields_item_text: 'param pam pam' })}>Add one</button>
-                      </div>
-                    </div>
+                              <button type="button" onClick={() => items.remove(index)}>remove this</button>
+                            </Wrapper>
+                          )}
+                        </FieldSet>
+                      ))}
+                      <br />
+                      <button type="button" onClick={() => items.append({ array_fields_item_number: value && value.length ? 0 : undefined, array_fields_item_text: 'param pam pam' })}>Add one</button>
+                    </Wrapper>
                   )}
                 </FieldList>
               </div>
