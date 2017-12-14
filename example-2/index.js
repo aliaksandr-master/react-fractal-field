@@ -84,7 +84,7 @@ const patternFloat = () => (value) => /^\d+.?\d*$/.test(value) ? null : 'invalid
 
 
 const Wrapper = ({ children }) => (
-  <div style={{ border: '1px solid #aaa', padding: '10px', margin: '20px 0 0 20px' }}>{children}</div>
+  <div style={{ border: '1px solid #aaa', padding: '10px', margin: '20px 0' }}>{children}</div>
 );
 
 
@@ -176,7 +176,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
   render () {
     /*eslint-disable react/jsx-handler-names*/
     return (
-      <FieldSet debug {...this.props}>
+      <FieldSet {...this.props}>
         {({ value, $state, ...other }) => (
           <form onSubmit={other.triggerSubmit}>
             <ErrorBlock hasException={other.hasException} error={other.error} valid={other.valid} />
@@ -306,7 +306,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                 <FieldList name="array_fields">
                   {({ triggerChange, value, error, hasException, valid, $state, items }) => (
                     <Wrapper>
-                      {this.DDInfo('[array_fields]:', value)}
+                      {this.DDInfo('[array_fields]:', value, true)}
 
                       <ErrorBlock hasException={hasException} valid={valid} error={error} />
 
@@ -314,12 +314,12 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                         <FieldSet key={index} name={index}>
                           {({ value, valid, error, hasException, $state }) => (
                             <Wrapper>
-                              {this.DDInfo(`array_fields[${index}]:`, value)}
+                              {this.DDInfo(`array_fields[${index}]:`, value, true)}
 
                               <ErrorBlock hasException={hasException} valid={valid} error={error} />
 
                               <div>
-                                <Field name="array_fields_item_number" format={parseFloat} normalize={parseFloat} validate={required()}>
+                                <Field name="array_fields_item_number" format={(value) => isNaN(parseFloat(value)) ? '' : parseFloat(value)} normalize={(value) => isNaN(parseFloat(value)) ? undefined : parseFloat(value)} validate={required()}>
                                   {({ control, value, valid, error, hasException, $state }) => (
                                     <Wrapper>
                                       {this.DDInfo(`array_fields[${index}].array_fields_item_number:`, value)}
@@ -336,6 +336,14 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                                     </Wrapper>
                                   )}
                                 </Field>
+
+                                <Field name="counter">
+                                  {({ control, value, valid, error, hasException, $state }) => (
+                                    <Wrapper>
+                                      {this.DDInfo(`array_fields[${index}].array_fields_item_text:`, value)}
+                                    </Wrapper>
+                                  )}
+                                </Field>
                               </div>
 
                               <button type="button" onClick={() => items.remove(index)}>remove this</button>
@@ -344,7 +352,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                         </FieldSet>
                       ))}
                       <br />
-                      <button type="button" onClick={() => items.append({ array_fields_item_number: value && value.length ? 0 : undefined, array_fields_item_text: 'param pam pam' })}>Add one</button>
+                      <button type="button" onClick={() => items.append({ counter: items.length, array_fields_item_number: items.length || undefined, array_fields_item_text: `param pam pam ${items.length}` })}>Add one</button>
                     </Wrapper>
                   )}
                 </FieldList>
