@@ -2,14 +2,16 @@
   "automock": false,
   "notify": true,
   "roots": [
-    "<rootDir>/lib"
+    "<rootDir>/lib",
+    "<rootDir>/example-1",
+    "<rootDir>/example-2"
   ],
   "resetModules": true,
   "testEnvironment": "jsdom",
   "cacheDirectory": "<rootDir>/.tmp/jest-cache",
   "coverageDirectory": "<rootDir>/.tmp/test-coverage-report",
   "collectCoverageFrom": [
-    "lib/**/*.{js,jsx}"
+    "lib/**/*.js"
   ],
   "coveragePathIgnorePatterns": [
     "/node_modules/",
@@ -20,8 +22,7 @@
   },
   "moduleFileExtensions": [
     "",
-    "js",
-    "jsx"
+    "js"
   ],
   "testRegex": "/__tests__/[^_]+.+?\\.test\\.js$",
   "moduleDirectories": [

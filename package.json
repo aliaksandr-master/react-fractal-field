@@ -9,7 +9,7 @@
     "precommit": "npm test",
     "prepush": "npm test",
     "test": "node_modules/.bin/eslint --color --config ./.eslintrc.json lib/**/*.js && npm run jest",
-    "jest": "node_modules/.bin/jest -c=jest-config.json --coverage"
+    "jest": "node_modules/.bin/jest -c=jest.config.json --coverage"
   },
   "repository": {
     "type": "git",
