@@ -1,6 +1,6 @@
 /*eslint-env jest*/
 import '../index';
 
-test(() => {
+test('example-1', () => {
   expect(true).toBe(true);
 });

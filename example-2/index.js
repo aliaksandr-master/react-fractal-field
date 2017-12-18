@@ -6,7 +6,7 @@ import isNil from 'lodash/isNil';
 import isNaN from 'lodash/isNaN';
 import isPlainObject from 'lodash/isPlainObject';
 import ReactJson from 'react-json-view';
-import { Field, FieldSet, FieldList } from '../lib';
+import { Field, FieldSet, FieldList, FieldBoolean, FieldNumber, FieldString } from '../lib';
 
 
 
@@ -193,7 +193,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
 
             <div style={{ overflow: 'hidden', padding: 20 }}>
               <div style={{ float: 'left', width: '48%' }}>
-                <Field name="main_radio" id="main_radio">
+                <FieldString name="main_radio" id="main_radio">
                   {({ value, ...other }) => (
                     <Wrapper>
                       {this.DDInfo('[main_radio] 1 (related):', value)}
@@ -202,12 +202,12 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
                     </Wrapper>
                   )}
-                </Field>
+                </FieldString>
 
                 <br />
                 <br />
 
-                <Field name="main_radio" id="main_radio">
+                <FieldString name="main_radio" id="main_radio">
                   {({ value, error, ...other }) => (
                     <Wrapper>
                       {this.DDInfo('[main_radio] 2 (related):', value)}
@@ -216,7 +216,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
                     </Wrapper>
                   )}
-                </Field>
+                </FieldString>
 
                 <br />
                 <br />
@@ -241,14 +241,14 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                         <br />
                         <br />
 
-                        <Field name="nested_field_bool">
+                        <FieldBoolean name="nested_field_bool">
                           {({ control, value, ...other }) => (
                             <Wrapper>
                               {this.DDInfo('[nested_field_bool]:', value)}
                               <FieldCheckBox hasException={other.hasException} valid={other.valid} error={other.error} {...control} checked={Boolean(value)}>nested_field_bool</FieldCheckBox>
                             </Wrapper>
                           )}
-                        </Field>
+                        </FieldBoolean>
                       </div>
                     </Wrapper>
                   )}
@@ -272,7 +272,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                 <br />
                 <br />
 
-                <Field
+                <FieldNumber
                   name="price"
                   validate={[ required(), numberGTE(3) ]}
                 >
@@ -296,7 +296,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                       </Field>
                     </Wrapper>
                   )}
-                </Field>
+                </FieldNumber>
 
                 <br />
                 <br />

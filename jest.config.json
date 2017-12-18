@@ -15,7 +15,8 @@
   ],
   "coveragePathIgnorePatterns": [
     "/node_modules/",
-    "/__tests__/"
+    "/__tests__/",
+    "/deprecated/"
   ],
   "globals": {
     "process.env.NODE_ENV": "testing"
