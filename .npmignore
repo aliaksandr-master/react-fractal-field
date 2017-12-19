@@ -4,5 +4,6 @@
 !README.md
 !.babelrc
 !LICENSE-MIT
+!webpack.config.js
 
-lib/__tests__
+**/__tests__/
