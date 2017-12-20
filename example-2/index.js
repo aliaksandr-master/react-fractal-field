@@ -302,7 +302,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                 <br />
 
                 <FieldList name="array_fields">
-                  {({ triggerChange, value, error, hasException, valid, $state, items }) => (
+                  {({ triggerChange, value, error, hasException, valid, $state, items, appendItems, removeItems }) => (
                     <Wrapper>
                       {this.DDInfo('[array_fields]:', value, true)}
 
@@ -344,13 +344,13 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                                 </Field>
                               </div>
 
-                              <button type="button" onClick={() => items.remove(index)}>remove this</button>
+                              <button type="button" onClick={() => removeItems(index)}>remove this</button>
                             </Wrapper>
                           )}
                         </FieldSet>
                       ))}
                       <br />
-                      <button type="button" onClick={() => items.append({ counter: items.length, array_fields_item_number: items.length || undefined, array_fields_item_text: `param pam pam ${items.length}` })}>Add one</button>
+                      <button type="button" onClick={() => appendItems({ counter: items.length, array_fields_item_number: items.length || undefined, array_fields_item_text: `param pam pam ${items.length}` })}>Add one</button>
                     </Wrapper>
                   )}
                 </FieldList>
