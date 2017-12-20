@@ -4,7 +4,7 @@
   "description": "predictable react router",
   "main": "lib/index.js",
   "scripts": {
-    "start": "webpack --watch",
+    "start": "node_modules/.bin/webpack --watch",
     "cleanup": "npm prune && npm i && npm dedupe",
     "precommit": "npm test",
     "prepush": "npm test",
@@ -34,7 +34,7 @@
   "devDependencies": {
     "babel-core": "6.26.0",
     "babel-eslint": "8.0.3",
-    "babel-jest": "22.0.0",
+    "babel-jest": "22.0.3",
     "babel-loader": "7.1.2",
     "babel-plugin-transform-runtime": "6.23.0",
     "babel-polyfill": "6.26.0",
@@ -60,16 +60,16 @@
     "eslint-plugin-require-path-exists": "1.1.7",
     "eslint-plugin-standard": "3.0.1",
     "husky": "0.14.3",
-    "jest": "22.0.0",
-    "jest-cli": "22.0.0",
+    "jest": "22.0.3",
+    "jest-cli": "22.0.3",
     "lodash": "4.17.4",
-    "prop-types": "15.5.10",
+    "prop-types": "15.6.0",
     "react": "15.6.1",
     "react-addons-test-utils": "15.6.0",
     "react-dom": "^15.6.1",
     "react-json-view": "^1.13.3",
     "react-test-renderer": "15.6.1",
-    "webpack": "3.4.1"
+    "webpack": "3.10.0"
   },
   "peerDependencies": {
     "prop-types": "^15.5.10",
