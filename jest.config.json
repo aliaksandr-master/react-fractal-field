@@ -17,7 +17,8 @@
   "coveragePathIgnorePatterns": [
     "/node_modules/",
     "/__tests__/",
-    "/deprecated/"
+    "/deprecated/",
+    "lib/utils/log.js"
   ],
   "globals": {
     "process.env.NODE_ENV": "testing"
