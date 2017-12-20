@@ -4,7 +4,8 @@
   "roots": [
     "<rootDir>/lib",
     "<rootDir>/example-1-old",
-    "<rootDir>/example-2"
+    "<rootDir>/example-2",
+    "<rootDir>/example-3"
   ],
   "resetModules": true,
   "testEnvironment": "jsdom",
