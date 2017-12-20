@@ -6,7 +6,7 @@ import isNil from 'lodash/isNil';
 import isNaN from 'lodash/isNaN';
 import isPlainObject from 'lodash/isPlainObject';
 import ReactJson from 'react-json-view';
-import { Field, FieldSet, FieldList, FieldBoolean, FieldNumber, FieldString } from '../lib';
+import { FieldSet, FieldList, FieldBoolean, FieldNumber, FieldString } from '../lib';
 
 
 
@@ -245,14 +245,14 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                       <ErrorBlock hasException={hasException} valid={valid} error={error} />
 
                       <div>
-                        <Field preferState name="nested_field_text">
+                        <FieldString preferState name="nested_field_text">
                           {({ control, value, hasException, ...other }) => (
                             <Wrapper>
                               {this.DDInfo('[nested_field_text]:', value)}
                               <FieldInput hasException={hasException} valid={other.valid} error={other.error} {...control} />
                             </Wrapper>
                           )}
-                        </Field>
+                        </FieldString>
 
                         <br />
                         <br />
@@ -272,7 +272,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
               </div>
 
               <div style={{ float: 'right', width: '48%' }}>
-                <Field
+                <FieldNumber
                   name="value"
                   validate={[ required(), numberGTE(3) ]}
                   normalize={toFloat()}
@@ -283,7 +283,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                       <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
                     </Wrapper>
                   )}
-                </Field>
+                </FieldNumber>
 
                 <br />
                 <br />
@@ -296,7 +296,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                     <Wrapper>
                       {this.DDInfo('price', value)}
                       <ErrorBlock hasException={hasException} valid={valid} error={error} />
-                      <Field
+                      <FieldNumber
                         preferState
                         onChange={(value) => triggerChange(value)}
                         validate={[ (value) => patternFloat()(priceRemove('USD')(value)) ]}
@@ -309,7 +309,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                             <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
                           </Wrapper>
                         )}
-                      </Field>
+                      </FieldNumber>
                     </Wrapper>
                   )}
                 </FieldNumber>
@@ -333,31 +333,31 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                               <ErrorBlock hasException={hasException} valid={valid} error={error} />
 
                               <div>
-                                <Field name="array_fields_item_number" format={(value) => isNaN(parseFloat(value)) ? '' : parseFloat(value)} normalize={(value) => isNaN(parseFloat(value)) ? undefined : parseFloat(value)} validate={required()}>
+                                <FieldNumber name="array_fields_item_number" format={(value) => isNaN(parseFloat(value)) ? '' : parseFloat(value)} normalize={(value) => isNaN(parseFloat(value)) ? undefined : parseFloat(value)} validate={required()}>
                                   {({ control, value, valid, error, hasException, $state }) => (
                                     <Wrapper>
                                       {this.DDInfo(`array_fields[${index}].array_fields_item_number:`, value)}
                                       <FieldInput hasException={hasException} valid={valid} error={error} type="number" {...control} />
                                     </Wrapper>
                                   )}
-                                </Field>
+                                </FieldNumber>
 
-                                <Field name="array_fields_item_text">
+                                <FieldString name="array_fields_item_text">
                                   {({ control, value, valid, error, hasException, $state }) => (
                                     <Wrapper>
                                       {this.DDInfo(`array_fields[${index}].array_fields_item_text:`, value)}
                                       <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
                                     </Wrapper>
                                   )}
-                                </Field>
+                                </FieldString>
 
-                                <Field name="counter">
+                                <FieldNumber name="counter">
                                   {({ control, value, valid, error, hasException, $state }) => (
                                     <Wrapper>
                                       {this.DDInfo(`array_fields[${index}].array_fields_item_text:`, value)}
                                     </Wrapper>
                                   )}
-                                </Field>
+                                </FieldNumber>
                               </div>
 
                               <button type="button" onClick={() => removeItems(index)}>remove this</button>
