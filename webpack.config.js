@@ -22,8 +22,8 @@ config.entry = {
   'react-fractal-field': [
     path.join(__dirname, DIR_SRC, 'index.js')
   ],
-  'react-fractal-field-demo-1': [
-    path.join(__dirname, 'example-1', 'index.js')
+  'react-fractal-field-demo-1-old': [
+    path.join(__dirname, 'example-1-old', 'index.js')
   ],
   'react-fractal-field-demo-2': [
     path.join(__dirname, 'example-2', 'index.js')
