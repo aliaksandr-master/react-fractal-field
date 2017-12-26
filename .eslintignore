@@ -1,0 +1,3 @@
+node_modules/*
+lib/deprecated/*
+**/__tests__/*.test.js
