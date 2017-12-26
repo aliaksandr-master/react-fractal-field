@@ -198,7 +198,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
     /*eslint-disable react/jsx-handler-names*/
     return (
       <FieldSet initialValue={initialValue} {...this.props}>
-        {({ value, $state, ...other }) => (
+        {({ value, $state, $field, ...other }) => (
           <form onSubmit={other.triggerSubmit}>
             <ErrorBlock hasException={other.hasException} error={other.error} valid={other.valid} />
 
@@ -209,6 +209,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
               <div style={{ float: 'right', width: '48%' }}>
                 <DDInfo label="FORM meta" data={other} />
                 <DDInfo label="FORM $state" data={$state} />
+                <DDInfo label="FORM $field" data={$field} />
               </div>
               <div style={{ clear: 'both' }} />
             </div>
@@ -218,7 +219,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
             <div style={{ padding: 20 }}>
               <div style={{ float: 'left', width: '48%' }}>
                 <FieldString name="main_radio" id="main_radio">
-                  {({ value, $state, ...other }) => (
+                  {({ value, $state, $field, ...other }) => (
                     <Wrapper>
                       <DDInfo label="[main_radio] 1 (related)" data={value} open />
                       <DDInfo label="meta" data={other} />
@@ -233,7 +234,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                 <br />
 
                 <FieldString name="main_radio" id="main_radio">
-                  {({ value, $state, ...other }) => (
+                  {({ value, $state, $field, ...other }) => (
                     <Wrapper>
                       <DDInfo label="[main_radio] 2 (related)" data={value} open />
                       <DDInfo label="meta" data={other} />
@@ -248,7 +249,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                 <br />
 
                 <FieldSet name="nested_fields" validate={() => value && value.main_radio === 'some-1' ? undefined : 'main_radio must be "some-1" only!'}>
-                  {({ value, $state, ...other }) => (
+                  {({ value, $state, $field, ...other }) => (
                     <Wrapper>
                       <DDInfo label="[nested_fields]" data={value} open />
                       <DDInfo label="meta" data={other} />
@@ -257,7 +258,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
 
                       <div>
                         <FieldString preferState name="nested_field_text">
-                          {({ $state, value, ...other }) => (
+                          {({ $state, $field, value, ...other }) => (
                             <Wrapper>
                               <DDInfo label="[nested_field_text]" data={value} open />
                               <DDInfo label="meta" data={other} />
@@ -290,7 +291,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                   validate={[ required(), numberGTE(3) ]}
                   normalize={toFloat()}
                 >
-                  {({ value, $state, ...other }) => (
+                  {({ value, $state, $field, ...other }) => (
                     <Wrapper>
                       <DDInfo label="[value]" data={value} open />
                       <DDInfo label="meta" data={other} />
@@ -306,7 +307,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                   name="price"
                   validate={[ required(), numberGTE(3) ]}
                 >
-                  {({ $state, value, ...other }) => (
+                  {({ $state, $field, value, ...other }) => (
                     <Wrapper>
                       <DDInfo label="price" data={value} open />
                       <DDInfo label="meta" data={other} />
@@ -318,7 +319,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                         normalize={composeFilter(priceRemove('USD'), toFloat())}
                         format={composeFilter(toFixed(2), priceAdd('USD'))}
                       >
-                        {({ value, $state, ...other }) => (
+                        {({ value, $state, $field, ...other }) => (
                           <Wrapper>
                             <DDInfo label="price2 INNER" data={value} open />
                             <DDInfo label="meta" data={other} />
@@ -334,7 +335,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                 <br />
 
                 <FieldList name="array_fields">
-                  {({ value, $state, ...listOther }) => (
+                  {({ value, $state, $field, ...listOther }) => (
                     <Wrapper>
                       <DDInfo label="array_fields" data={value} open />
                       <DDInfo label="meta" data={listOther} />
@@ -343,7 +344,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
 
                       {listOther.items.map((item, index) => (
                         <FieldSet key={index} name={index}>
-                          {({ value, $state, ...itemOther }) => (
+                          {({ value, $state, $field, ...itemOther }) => (
                             <Wrapper>
                               <DDInfo label={`array_fields[${index}]`} data={value} open />
                               <DDInfo label="meta" data={listOther} />
@@ -370,7 +371,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                                 </FieldString>
 
                                 <FieldNumber name="counter">
-                                  {({ control, value, valid, error, hasException, $state }) => (
+                                  {({ value }) => (
                                     <Wrapper>
                                       <DDInfo label={`array_fields[${index}].array_fields_item_text`} data={value} open />
                                     </Wrapper>
