@@ -1,11 +1,12 @@
-'use strict';
+/* eslint-env node */
 
 const path = require('path');
 const webpack = require('webpack');
 
 
+
 const DIR_SRC = 'lib';
-const NODE_ENV = process.env.NODE_ENV || 'development'; // eslint-disable-line
+const NODE_ENV = process.env.NODE_ENV || 'development';
 
 
 const config = {};
