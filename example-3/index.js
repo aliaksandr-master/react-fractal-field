@@ -144,47 +144,54 @@ const initialValue = {
   ]
 };
 
+const DDInfo = ({ label, data, open = false }) => {
+  const id = label.replace(/[^a-zA-Z0-9_]+/g, '_');
+
+  return (
+    <div id={id} className="dd-info">
+      {!open && (
+        <style>
+          {`#${id} { position: relative; cursor: pointer; } #${id} > .dd-info__in { display: none; z-index: 999; padding: 10px; border: 1px solid rgba(0,0,0,0.5); box-shadow: 0 2px 10px rgba(0,0,0,0.5); background: white; position: absolute; top: 100%; left: 0; }#${id}:hover > .dd-info__in { display: block; }`}
+        </style>
+      )}
+      <div><b>{label}</b></div>
+      <div className="dd-info__in" style={{ paddingBottom: 20 }}>
+        {Array.isArray(data) || isPlainObject(data)
+          ? (
+            <ReactJson enableClipboard={false} name={false} src={data} />
+          ) : (
+            <div style={{ minHeight: 14 }}>
+              {data === undefined
+                ? (
+                  <em>undefined</em>
+                ) : (
+                  data === null
+                    ? (
+                      <em>null</em>
+                    ) : (
+                      isNaN(data)
+                        ? (
+                          <em>NaN</em>
+                        ) : (
+                          JSON.stringify(data)
+                        )
+                    )
+                )
+              }
+            </div>
+          )
+        }
+      </div>
+    </div>
+  );
+};
+
 const ExampleBasicUsage = class ExampleBasicUsage extends Component {
   constructor (...args) {
     super(...args);
 
     this.state = {
     };
-  }
-
-  DDInfo (label, data, open = false) {
-    return (
-      <div>
-        <div><b>{label}</b></div>
-        <div style={{ paddingBottom: 20 }}>
-          {Array.isArray(data) || isPlainObject(data)
-            ? (
-              <ReactJson enableClipboard={false} collapsed={!open} name={false} src={data} />
-            ) : (
-              <div style={{ minHeight: 14 }}>
-                {data === undefined
-                  ? (
-                    <em>undefined</em>
-                  ) : (
-                    data === null
-                      ? (
-                        <em>null</em>
-                      ) : (
-                        isNaN(data)
-                          ? (
-                            <em>NaN</em>
-                          ) : (
-                            JSON.stringify(data)
-                          )
-                      )
-                  )
-                }
-              </div>
-            )
-          }
-        </div>
-      </div>
-    );
   }
 
   render () {
@@ -195,24 +202,26 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
           <form onSubmit={other.triggerSubmit}>
             <ErrorBlock hasException={other.hasException} error={other.error} valid={other.valid} />
 
-            <div style={{ overflow: 'hidden' }}>
+            <div>
               <div style={{ float: 'left', width: '48%' }}>
-                {this.DDInfo('FORM value', value, true)}
+                <DDInfo label="FORM value" data={value} open />
               </div>
               <div style={{ float: 'right', width: '48%' }}>
-                {this.DDInfo('FORM meta', other, true)}
-                {this.DDInfo('FORM $state', $state)}
+                <DDInfo label="FORM meta" data={other} />
+                <DDInfo label="FORM $state" data={$state} />
               </div>
+              <div style={{ clear: 'both' }} />
             </div>
 
             <button type="button" onClick={other.triggerSubmit}>Submit!</button>
 
-            <div style={{ overflow: 'hidden', padding: 20 }}>
+            <div style={{ padding: 20 }}>
               <div style={{ float: 'left', width: '48%' }}>
                 <FieldString name="main_radio" id="main_radio">
-                  {({ value, ...other }) => (
+                  {({ value, $state, ...other }) => (
                     <Wrapper>
-                      {this.DDInfo('[main_radio] 1 (related):', value)}
+                      <DDInfo label="[main_radio] 1 (related)" data={value} open />
+                      <DDInfo label="meta" data={other} />
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
@@ -224,9 +233,10 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                 <br />
 
                 <FieldString name="main_radio" id="main_radio">
-                  {({ value, error, ...other }) => (
+                  {({ value, $state, ...other }) => (
                     <Wrapper>
-                      {this.DDInfo('[main_radio] 2 (related):', value)}
+                      <DDInfo label="[main_radio] 2 (related)" data={value} open />
+                      <DDInfo label="meta" data={other} />
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
@@ -238,18 +248,20 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                 <br />
 
                 <FieldSet name="nested_fields" validate={() => value && value.main_radio === 'some-1' ? undefined : 'main_radio must be "some-1" only!'}>
-                  {({ value, error, valid, hasException }) => (
+                  {({ value, $state, ...other }) => (
                     <Wrapper>
-                      {this.DDInfo('[nested_fields]:', value)}
+                      <DDInfo label="[nested_fields]" data={value} open />
+                      <DDInfo label="meta" data={other} />
 
-                      <ErrorBlock hasException={hasException} valid={valid} error={error} />
+                      <ErrorBlock hasException={other.hasException} valid={other.valid} error={other.error} />
 
                       <div>
                         <FieldString preferState name="nested_field_text">
-                          {({ control, value, hasException, ...other }) => (
+                          {({ $state, value, ...other }) => (
                             <Wrapper>
-                              {this.DDInfo('[nested_field_text]:', value)}
-                              <FieldInput hasException={hasException} valid={other.valid} error={other.error} {...control} />
+                              <DDInfo label="[nested_field_text]" data={value} open />
+                              <DDInfo label="meta" data={other} />
+                              <FieldInput hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} />
                             </Wrapper>
                           )}
                         </FieldString>
@@ -260,7 +272,8 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                         <FieldBoolean name="nested_field_bool">
                           {({ control, value, ...other }) => (
                             <Wrapper>
-                              {this.DDInfo('[nested_field_bool]:', value)}
+                              <DDInfo label="[nested_field_bool]" data={value} open />
+                              <DDInfo label="meta" data={other} />
                               <FieldCheckBox hasException={other.hasException} valid={other.valid} error={other.error} {...control} checked={Boolean(value)}>nested_field_bool</FieldCheckBox>
                             </Wrapper>
                           )}
@@ -277,10 +290,11 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                   validate={[ required(), numberGTE(3) ]}
                   normalize={toFloat()}
                 >
-                  {({ control, value, error, valid, hasException, $state }) => (
+                  {({ value, $state, ...other }) => (
                     <Wrapper>
-                      {this.DDInfo('[value]:', value)}
-                      <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
+                      <DDInfo label="[value]" data={value} open />
+                      <DDInfo label="meta" data={other} />
+                      <FieldInput hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} />
                     </Wrapper>
                   )}
                 </FieldNumber>
@@ -292,21 +306,23 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                   name="price"
                   validate={[ required(), numberGTE(3) ]}
                 >
-                  {({ triggerChange, hasException, valid, error, value }) => (
+                  {({ $state, value, ...other }) => (
                     <Wrapper>
-                      {this.DDInfo('price', value)}
-                      <ErrorBlock hasException={hasException} valid={valid} error={error} />
+                      <DDInfo label="price" data={value} open />
+                      <DDInfo label="meta" data={other} />
+                      <ErrorBlock hasException={other.hasException} valid={other.valid} error={other.error} />
                       <FieldNumber
                         preferState
-                        onChange={(value) => triggerChange(value)}
+                        onChange={(value) => other.triggerChange(value)}
                         validate={[ (value) => patternFloat()(priceRemove('USD')(value)) ]}
                         normalize={composeFilter(priceRemove('USD'), toFloat())}
                         format={composeFilter(toFixed(2), priceAdd('USD'))}
                       >
-                        {({ control, value, error, valid, hasException, $state }) => (
+                        {({ value, $state, ...other }) => (
                           <Wrapper>
-                            {this.DDInfo('price2 INNER:', value)}
-                            <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
+                            <DDInfo label="price2 INNER" data={value} open />
+                            <DDInfo label="meta" data={other} />
+                            <FieldInput hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} />
                           </Wrapper>
                         )}
                       </FieldNumber>
@@ -318,25 +334,27 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                 <br />
 
                 <FieldList name="array_fields">
-                  {({ triggerChange, value, error, hasException, valid, $state, items, appendItems, removeItems }) => (
+                  {({ value, $state, ...listOther }) => (
                     <Wrapper>
-                      {this.DDInfo('[array_fields]:', value, true)}
+                      <DDInfo label="array_fields" data={value} open />
+                      <DDInfo label="meta" data={listOther} />
 
-                      <ErrorBlock hasException={hasException} valid={valid} error={error} />
+                      <ErrorBlock hasException={listOther.hasException} valid={listOther.valid} error={listOther.error} />
 
-                      {items.map((item, index) => (
+                      {listOther.items.map((item, index) => (
                         <FieldSet key={index} name={index}>
-                          {({ value, valid, error, hasException, $state }) => (
+                          {({ value, $state, ...itemOther }) => (
                             <Wrapper>
-                              {this.DDInfo(`array_fields[${index}]:`, value, true)}
+                              <DDInfo label={`array_fields[${index}]`} data={value} open />
+                              <DDInfo label="meta" data={listOther} />
 
-                              <ErrorBlock hasException={hasException} valid={valid} error={error} />
+                              <ErrorBlock hasException={itemOther.hasException} valid={itemOther.valid} error={itemOther.error} />
 
                               <div>
                                 <FieldNumber name="array_fields_item_number" format={(value) => isNaN(parseFloat(value)) ? '' : parseFloat(value)} normalize={(value) => isNaN(parseFloat(value)) ? undefined : parseFloat(value)} validate={required()}>
                                   {({ control, value, valid, error, hasException, $state }) => (
                                     <Wrapper>
-                                      {this.DDInfo(`array_fields[${index}].array_fields_item_number:`, value)}
+                                      <DDInfo label={`array_fields[${index}].array_fields_item_number`} data={value} open />
                                       <FieldInput hasException={hasException} valid={valid} error={error} type="number" {...control} />
                                     </Wrapper>
                                   )}
@@ -345,7 +363,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                                 <FieldString name="array_fields_item_text">
                                   {({ control, value, valid, error, hasException, $state }) => (
                                     <Wrapper>
-                                      {this.DDInfo(`array_fields[${index}].array_fields_item_text:`, value)}
+                                      <DDInfo label={`array_fields[${index}].array_fields_item_text`} data={value} open />
                                       <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
                                     </Wrapper>
                                   )}
@@ -354,23 +372,24 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                                 <FieldNumber name="counter">
                                   {({ control, value, valid, error, hasException, $state }) => (
                                     <Wrapper>
-                                      {this.DDInfo(`array_fields[${index}].array_fields_item_text:`, value)}
+                                      <DDInfo label={`array_fields[${index}].array_fields_item_text`} data={value} open />
                                     </Wrapper>
                                   )}
                                 </FieldNumber>
                               </div>
 
-                              <button type="button" onClick={() => removeItems(index)}>remove this</button>
+                              <button type="button" onClick={() => listOther.removeItems(index)}>remove this</button>
                             </Wrapper>
                           )}
                         </FieldSet>
                       ))}
                       <br />
-                      <button type="button" onClick={() => appendItems({ counter: items.length, array_fields_item_number: items.length || undefined, array_fields_item_text: `param pam pam ${items.length}` })}>Add one</button>
+                      <button type="button" onClick={() => listOther.appendItems({ counter: listOther.items.length, array_fields_item_number: listOther.items.length || undefined, array_fields_item_text: `param pam pam ${listOther.items.length}` })}>Add one</button>
                     </Wrapper>
                   )}
                 </FieldList>
               </div>
+              <div style={{ clear: 'both' }} />
             </div>
           </form>
         )}
