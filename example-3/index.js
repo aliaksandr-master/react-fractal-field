@@ -223,6 +223,8 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                     <Wrapper>
                       <DDInfo label="[main_radio] 1 (related)" data={value} open />
                       <DDInfo label="meta" data={other} />
+                      <DDInfo label="$field" data={$field} />
+                      <DDInfo label="$state" data={$state} />
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
@@ -238,6 +240,8 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                     <Wrapper>
                       <DDInfo label="[main_radio] 2 (related)" data={value} open />
                       <DDInfo label="meta" data={other} />
+                      <DDInfo label="$field" data={$field} />
+                      <DDInfo label="$state" data={$state} />
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
                       <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
@@ -253,6 +257,8 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                     <Wrapper>
                       <DDInfo label="[nested_fields]" data={value} open />
                       <DDInfo label="meta" data={other} />
+                      <DDInfo label="$field" data={$field} />
+                      <DDInfo label="$state" data={$state} />
 
                       <ErrorBlock hasException={other.hasException} valid={other.valid} error={other.error} />
 
@@ -262,6 +268,8 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                             <Wrapper>
                               <DDInfo label="[nested_field_text]" data={value} open />
                               <DDInfo label="meta" data={other} />
+                              <DDInfo label="$field" data={$field} />
+                              <DDInfo label="$state" data={$state} />
                               <FieldInput hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} />
                             </Wrapper>
                           )}
@@ -275,6 +283,8 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                             <Wrapper>
                               <DDInfo label="[nested_field_bool]" data={value} open />
                               <DDInfo label="meta" data={other} />
+                              <DDInfo label="$field" data={$field} />
+                              <DDInfo label="$state" data={$state} />
                               <FieldCheckBox hasException={other.hasException} valid={other.valid} error={other.error} {...control} checked={Boolean(value)}>nested_field_bool</FieldCheckBox>
                             </Wrapper>
                           )}
@@ -295,6 +305,8 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                     <Wrapper>
                       <DDInfo label="[value]" data={value} open />
                       <DDInfo label="meta" data={other} />
+                      <DDInfo label="$field" data={$field} />
+                      <DDInfo label="$state" data={$state} />
                       <FieldInput hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} />
                     </Wrapper>
                   )}
@@ -311,6 +323,8 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                     <Wrapper>
                       <DDInfo label="price" data={value} open />
                       <DDInfo label="meta" data={other} />
+                      <DDInfo label="$field" data={$field} />
+                      <DDInfo label="$state" data={$state} />
                       <ErrorBlock hasException={other.hasException} valid={other.valid} error={other.error} />
                       <FieldNumber
                         preferState
@@ -323,6 +337,8 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                           <Wrapper>
                             <DDInfo label="price2 INNER" data={value} open />
                             <DDInfo label="meta" data={other} />
+                            <DDInfo label="$field" data={$field} />
+                            <DDInfo label="$state" data={$state} />
                             <FieldInput hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} />
                           </Wrapper>
                         )}
@@ -339,6 +355,8 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                     <Wrapper>
                       <DDInfo label="array_fields" data={value} open />
                       <DDInfo label="meta" data={listOther} />
+                      <DDInfo label="$field" data={$field} />
+                      <DDInfo label="$state" data={$state} />
 
                       <ErrorBlock hasException={listOther.hasException} valid={listOther.valid} error={listOther.error} />
 
@@ -348,6 +366,8 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
                             <Wrapper>
                               <DDInfo label={`array_fields[${index}]`} data={value} open />
                               <DDInfo label="meta" data={listOther} />
+                              <DDInfo label="$field" data={$field} />
+                              <DDInfo label="$state" data={$state} />
 
                               <ErrorBlock hasException={itemOther.hasException} valid={itemOther.valid} error={itemOther.error} />
 
