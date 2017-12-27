@@ -144,8 +144,17 @@ const initialValue = {
   ]
 };
 
+const PERFORMANCE_TEST = false;
+const DEBUG = false;
+
 const DDInfo = ({ label, data, open = false }) => {
   const id = label.replace(/[^a-zA-Z0-9_]+/g, '_');
+
+  if (PERFORMANCE_TEST) {
+    return (
+      <noscript />
+    );
+  }
 
   return (
     <div id={id} className="dd-info">
@@ -197,7 +206,7 @@ const ExampleBasicUsage = class ExampleBasicUsage extends Component {
   render () {
     /*eslint-disable react/jsx-handler-names*/
     return (
-      <FieldSet initialValue={initialValue} {...this.props}>
+      <FieldSet debug={DEBUG} initialValue={initialValue} {...this.props}>
         {({ value, $state, $field, ...other }) => (
           <form onSubmit={other.triggerSubmit}>
             <ErrorBlock hasException={other.hasException} error={other.error} valid={other.valid} />
