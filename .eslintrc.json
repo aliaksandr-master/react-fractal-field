@@ -12,7 +12,6 @@
     "window": true
   },
   "plugins": [
-    "immutable",
     "no-use-extend-native",
     "deprecate",
     "jsdoc",
@@ -44,10 +43,6 @@
     }
   },
   "rules": {
-    "immutable/no-this": [0],
-    "immutable/no-let": [0],
-    "immutable/no-mutation": [0],
-
     "no-use-extend-native/no-use-extend-native": [2],
 
     "deprecate/function": [0],
@@ -142,16 +137,16 @@
     "fp/no-get-set": [2],
     "fp/no-let": [0],
     "fp/no-loops": [2],
-    "fp/no-mutating-assign": [0],
-    "fp/no-mutating-methods": [0],
+    "fp/no-mutating-assign": [2],
+    "fp/no-mutating-methods": [2],
     "fp/no-mutation": [0],
     "fp/no-nil": [0],
-    "fp/no-proxy": [0],
+    "fp/no-proxy": [2],
     "fp/no-rest-parameters": [0],
     "fp/no-this": [0],
     "fp/no-throw": [0],
     "fp/no-unused-expression": [0],
-    "fp/no-valueof-field": [0],
+    "fp/no-valueof-field": [2],
 
     "promise/always-return": [0],
     "promise/no-return-wrap": [0],
