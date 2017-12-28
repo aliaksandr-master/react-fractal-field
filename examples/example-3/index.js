@@ -157,8 +157,9 @@ const ExampleBasicUsage = (props) => {
                     <Info label="$state" data={$state} />
                     <ErrorBlock hasException={other.hasException} valid={other.valid} error={other.error} />
                     <FieldNumber
+                      value={value}
                       preferState
-                      onChange={(value) => other.triggerChange(value)}
+                      onChange={other.triggerChange}
                       validate={[ (value) => patternFloat()(priceRemove('USD')(value)) ]}
                       normalize={composeFilter(priceRemove('USD'), toFloat())}
                       format={composeFilter(toFixed(2), priceAdd('USD'))}
