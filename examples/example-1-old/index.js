@@ -6,7 +6,7 @@ import isNil from 'lodash/isNil';
 import isNaN from 'lodash/isNaN';
 import isPlainObject from 'lodash/isPlainObject';
 import ReactJson from 'react-json-view';
-import FractalField from '../lib/deprecated';
+import FractalField from '../../lib/deprecated/index';
 
 
 

@@ -3,9 +3,7 @@
   "notify": true,
   "roots": [
     "<rootDir>/lib",
-    "<rootDir>/example-1-old",
-    "<rootDir>/example-2",
-    "<rootDir>/example-3"
+    "<rootDir>/examples"
   ],
   "resetModules": true,
   "testEnvironment": "jsdom",

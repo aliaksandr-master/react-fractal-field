@@ -24,13 +24,13 @@ config.entry = {
     path.join(__dirname, DIR_SRC, 'index.js')
   ],
   'react-fractal-field-demo-1-old': [
-    path.join(__dirname, 'example-1-old', 'index.js')
+    path.join(__dirname, 'examples/example-1-old', 'index.js')
   ],
   'react-fractal-field-demo-2': [
-    path.join(__dirname, 'example-2', 'index.js')
+    path.join(__dirname, 'examples/example-2', 'index.js')
   ],
   'react-fractal-field-demo-3': [
-    path.join(__dirname, 'example-3', 'index.js')
+    path.join(__dirname, 'examples/example-3', 'index.js')
   ]
 };
 

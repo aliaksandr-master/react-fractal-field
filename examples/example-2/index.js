@@ -6,7 +6,7 @@ import isNil from 'lodash/isNil';
 import isNaN from 'lodash/isNaN';
 import isPlainObject from 'lodash/isPlainObject';
 import ReactJson from 'react-json-view';
-import { Field, FieldSet, FieldList, FieldBoolean, FieldNumber, FieldString } from '../lib';
+import { Field, FieldSet, FieldList, FieldBoolean, FieldNumber, FieldString } from '../../lib/index';
 
 
 

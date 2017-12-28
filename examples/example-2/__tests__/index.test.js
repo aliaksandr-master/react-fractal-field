@@ -1,6 +1,6 @@
 /*eslint-env jest*/
 import '../index';
-import { triggerChange, /*triggerInitialize, triggerFocus, triggerBlur, */triggerSubmit, /*triggerReset, */onError } from '../../lib';
+import { triggerChange, /*triggerInitialize, triggerFocus, triggerBlur, */triggerSubmit, /*triggerReset, */onError } from '../../../lib';
 
 test('example-2', () => {
   triggerChange('main_radio', 'some-1');
