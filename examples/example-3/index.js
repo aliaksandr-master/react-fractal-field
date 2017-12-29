@@ -93,7 +93,7 @@ const ExampleBasicUsage = (props) => {
                     <ErrorBlock hasException={other.hasException} valid={other.valid} error={other.error} />
 
                     <div>
-                      <FieldString preferState name="nested_field_text">
+                      <FieldString postponeInvalid name="nested_field_text">
                         {({ $state, $field, value, ...other }) => (
                           <Wrapper>
                             <Info label="[nested_field_text]" data={value} open />
@@ -158,7 +158,7 @@ const ExampleBasicUsage = (props) => {
                     <ErrorBlock hasException={other.hasException} valid={other.valid} error={other.error} />
                     <FieldNumber
                       value={value}
-                      preferState
+                      postponeInvalid
                       onChange={other.triggerChange}
                       validate={[ (value) => patternFloat()(priceRemove('USD')(value)) ]}
                       normalize={composeFilter(priceRemove('USD'), toFloat())}
