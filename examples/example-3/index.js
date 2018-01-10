@@ -1,6 +1,7 @@
 /* eslint-disable react/prop-types, react/jsx-no-bind, react/no-array-index-key, jsx-a11y/label-has-for */
 import React from 'react';
 import { render } from 'react-dom';
+import omit from 'lodash/omit';
 import { FieldSet, FieldList, FieldBoolean, FieldNumber, FieldString } from '../../lib/index';
 import { Wrapper, composeFilter, ErrorBlock, FieldCheckBox, FieldInput, FieldRadio, Info, numberGTE, patternFloat, priceAdd, priceRemove, required, toFixed, toFloat } from '../utils';
 
@@ -10,6 +11,9 @@ const initialValue = {
   main_radio: 'some-1',
   nested_fields: {
     nested_field_bool: true
+  },
+  dynamic_fields: {
+    some_1: 'predefined'
   },
   value: 33,
   price: 23,
@@ -24,6 +28,15 @@ const initialValue = {
 
 const DEBUG = false;
 
+let counter = 0;
+
+const styles = {
+  row: { padding: 20 },
+  column1: { float: 'left', width: '48%' },
+  column2: { float: 'right', width: '48%' },
+  columnReset: { clear: 'both' }
+};
+
 const ExampleBasicUsage = (props) => {
   /*eslint-disable react/jsx-handler-names*/
   return (
@@ -32,22 +45,57 @@ const ExampleBasicUsage = (props) => {
         <form onSubmit={other.triggerSubmit}>
           <ErrorBlock hasException={other.hasException} error={other.error} valid={other.valid} />
 
-          <div>
-            <div style={{ float: 'left', width: '48%' }}>
+          <div style={styles.row}>
+            <div style={styles.column1}>
               <Info label="FORM value" data={value} open />
             </div>
-            <div style={{ float: 'right', width: '48%' }}>
+            <div style={styles.column2}>
               <Info label="FORM meta" data={other} open />
               <Info label="FORM $state" data={$state} />
               <Info label="FORM $field" data={$field} />
             </div>
-            <div style={{ clear: 'both' }} />
+            <div style={styles.columnReset} />
+
+            <button type="button" onClick={other.triggerSubmit}>Submit!</button>
           </div>
 
-          <button type="button" onClick={other.triggerSubmit}>Submit!</button>
+          <div style={styles.row}>
+            <div style={styles.column1}>
+              <div>
+                <FieldSet name="dynamic_fields">
+                  {({ value: dynamicFieldsValue, ...dynamicFieldsOther }) => (
+                    <Wrapper>
+                      <Info label="dynamic_fields" data={dynamicFieldsValue} open />
+                      <Info label="meta" data={dynamicFieldsOther} />
+                      <Info label="$field" data={$field} />
+                      <Info label="$state" data={$state} />
 
-          <div style={{ padding: 20 }}>
-            <div style={{ float: 'left', width: '48%' }}>
+                      {Object.keys(dynamicFieldsValue).sort().map((name) => ( // eslint-disable-line fp/no-mutating-methods
+                        <FieldString name={name} key={name}>
+                          {({ value, $state, $field, ...other }) => (
+                            <Wrapper>
+                              <Info label={name} data={value} open />
+                              <Info label="meta" data={other} />
+                              <Info label="$field" data={$field} />
+                              <Info label="$state" data={$state} />
+                              <FieldInput
+                                hasException={other.hasException}
+                                valid={other.valid}
+                                error={other.error}
+                                {...other.control}
+                              />
+                              <button type="button" onClick={() => dynamicFieldsOther.triggerChange(omit(dynamicFieldsValue, name))}>Remove</button>
+                            </Wrapper>
+                          )}
+                        </FieldString>
+                      ))}
+
+                      <button type="button" onClick={() => dynamicFieldsOther.triggerChange({ ...dynamicFieldsValue, [`dynamic_field_${Object.keys(dynamicFieldsValue).length}_${++counter}`]: String(counter) })}>Add new dynamic field</button>
+                    </Wrapper>
+                  )}
+                </FieldSet>
+              </div>
+
               <FieldString name="main_radio" id="main_radio">
                 {({ value, $state, $field, ...other }) => (
                   <Wrapper>
@@ -125,7 +173,7 @@ const ExampleBasicUsage = (props) => {
               </FieldSet>
             </div>
 
-            <div style={{ float: 'right', width: '48%' }}>
+            <div style={styles.column2}>
               <FieldNumber
                 name="value"
                 validate={[ required(), numberGTE(3) ]}
@@ -241,7 +289,7 @@ const ExampleBasicUsage = (props) => {
                 )}
               </FieldList>
             </div>
-            <div style={{ clear: 'both' }} />
+            <div style={styles.columnReset} />
           </div>
         </form>
       )}
