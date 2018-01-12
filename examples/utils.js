@@ -11,7 +11,8 @@ import ReactJson from 'react-json-view';
 
 export const composeFilter = (...filters) => (value) => filters.reduce((result, filter) => filter(result), value);
 
-export const priceRemove = (currency) => (value) => {
+export const priceRemove = (currency) => (srcValue) => {
+  let value = srcValue;
   let tmp = value;
 
   for (let i = 0; i < 10; i++) {
@@ -76,7 +77,7 @@ export const required = () => (value) => isNil(value) || isNaN(value) || value =
 
 export const numberGTE = (max) => (value) => isNumber(value) && value >= max ? null : `need to be > ${max}`;
 
-export const patternFloat = () => (value) => /^\d+.?\d*$/.test(value) ? null : 'invalid format';
+export const patternFloat = (value) => /^-?\d+(?:\.\d+)?$/.test(value) ? null : 'invalid float format';
 
 
 export const Wrapper = ({ children }) => (

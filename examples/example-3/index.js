@@ -13,7 +13,7 @@ const initialValue = {
     nested_field_bool: true
   },
   dynamic_fields: {
-    some_1: 'predefined'
+
   },
   value: 33,
   price: 23,
@@ -204,24 +204,25 @@ const ExampleBasicUsage = (props) => {
                     <Info label="$field" data={$field} />
                     <Info label="$state" data={$state} />
                     <ErrorBlock hasException={other.hasException} valid={other.valid} error={other.error} />
-                    <FieldNumber
-                      value={value}
+
+                    <FieldString
+                      value={String(value)}
+                      onChange={(val) => other.triggerChange(toFloat()(val))}
                       postponeInvalid
-                      onChange={other.triggerChange}
-                      validate={[ (value) => patternFloat()(priceRemove('USD')(value)) ]}
-                      normalize={composeFilter(priceRemove('USD'), toFloat())}
-                      format={composeFilter(toFixed(2), priceAdd('USD'))}
+                      validate={patternFloat()}
+                      normalize={priceRemove('USD')}
+                      format={priceAdd('USD')}
                     >
                       {({ value, $state, $field, ...other }) => (
                         <Wrapper>
-                          <Info label="price2 INNER" data={value} open />
+                          <Info label="price (INNER)" data={value} open />
                           <Info label="meta" data={other} />
                           <Info label="$field" data={$field} />
                           <Info label="$state" data={$state} />
                           <FieldInput hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} />
                         </Wrapper>
                       )}
-                    </FieldNumber>
+                    </FieldString>
                   </Wrapper>
                 )}
               </FieldNumber>
