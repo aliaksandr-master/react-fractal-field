@@ -77,7 +77,7 @@ export const required = () => (value) => isNil(value) || isNaN(value) || value =
 
 export const numberGTE = (max) => (value) => isNumber(value) && value >= max ? null : `need to be > ${max}`;
 
-export const patternFloat = (value) => /^-?\d+(?:\.\d+)?$/.test(value) ? null : 'invalid float format';
+export const patternFloat = () => (value) => /^-?\d+(?:\.\d+)?$/.test(value) ? null : 'invalid float format';
 
 
 export const Wrapper = ({ children }) => (
