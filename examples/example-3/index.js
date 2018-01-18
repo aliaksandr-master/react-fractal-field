@@ -4,6 +4,7 @@ import { render } from 'react-dom';
 import omit from 'lodash/omit';
 import { FieldSet, FieldList, FieldBoolean, FieldNumber, FieldString } from '../../lib/index';
 import { Wrapper, composeFilter, ErrorBlock, FieldCheckBox, FieldInput, FieldRadio, Info, numberGTE, patternFloat, priceAdd, priceRemove, required, toFixed, toFloat } from '../utils';
+import { triggerChange } from '../../lib';
 
 
 // filters
@@ -23,7 +24,13 @@ const initialValue = {
       array_fields_item_number: 0,
       array_fields_item_text: 'param pam pam 0'
     }
-  ]
+  ],
+  prog_value: {
+    inc: {
+      value: 3
+    },
+    value: 5
+  }
 };
 
 const DEBUG = false;
@@ -61,40 +68,101 @@ const ExampleBasicUsage = (props) => {
 
           <div style={styles.row}>
             <div style={styles.column1}>
-              <div>
-                <FieldSet name="dynamic_fields">
-                  {({ value: dynamicFieldsValue, ...dynamicFieldsOther }) => (
-                    <Wrapper>
-                      <Info label="dynamic_fields" data={dynamicFieldsValue} open />
-                      <Info label="meta" data={dynamicFieldsOther} />
-                      <Info label="$field" data={$field} />
-                      <Info label="$state" data={$state} />
+              <FieldSet name="prog_value">
+                {({ value: progValue, $field, $state, ...progOther }) => (
+                  <Wrapper>
+                    <Info label="dynamic_fields" data={progValue} open />
+                    <Info label="meta" data={progOther} />
+                    <Info label="$field" data={$field} />
+                    <Info label="$state" data={$state} />
 
-                      {Object.keys(dynamicFieldsValue).sort().map((name) => ( // eslint-disable-line fp/no-mutating-methods
-                        <FieldString name={name} key={name}>
-                          {({ value, $state, $field, ...other }) => (
-                            <Wrapper>
-                              <Info label={name} data={value} open />
-                              <Info label="meta" data={other} />
-                              <Info label="$field" data={$field} />
-                              <Info label="$state" data={$state} />
-                              <FieldInput
-                                hasException={other.hasException}
-                                valid={other.valid}
-                                error={other.error}
-                                {...other.control}
-                              />
-                              <button type="button" onClick={() => dynamicFieldsOther.triggerChange(omit(dynamicFieldsValue, name))}>Remove</button>
-                            </Wrapper>
-                          )}
-                        </FieldString>
-                      ))}
+                    <button type="button" onClick={() => progOther.triggerChange({ inc: { value: progValue.inc.value + 1 }, value: progValue.value - 1 })}>Change Value!</button>
 
-                      <button type="button" onClick={() => dynamicFieldsOther.triggerChange({ ...dynamicFieldsValue, [`dynamic_field_${Object.keys(dynamicFieldsValue).length}_${++counter}`]: String(counter) })}>Add new dynamic field</button>
-                    </Wrapper>
-                  )}
-                </FieldSet>
-              </div>
+                    <FieldSet name="inc">
+                      {({ value, $field, $state, ...other }) => (
+                        <Wrapper>
+                          <Info label="dynamic_fields" data={value} open />
+                          <Info label="meta" data={other} />
+                          <Info label="$field" data={$field} />
+                          <Info label="$state" data={$state} />
+
+                          <button type="button" onClick={() => other.triggerChange({ value: value.value + 5 })}>Change Value!</button>
+
+                          <FieldNumber value={value.value} normalize={Number} onChange={(value) => other.triggerChange({ value })}>
+                            {({ value, $field, $state, ...other }) => (
+                              <Wrapper>
+                                <Info label="dynamic_fields" data={value} open />
+                                <Info label="meta" data={other} />
+                                <Info label="$field" data={$field} />
+                                <Info label="$state" data={$state} />
+
+                                <button type="button" onClick={() => other.triggerChange(value + 15)}>Change Value!</button>
+
+                                <FieldInput
+                                  hasException={other.hasException}
+                                  valid={other.valid}
+                                  error={other.error}
+                                  {...other.control}
+                                />
+                              </Wrapper>
+                            )}
+                          </FieldNumber>
+                        </Wrapper>
+                      )}
+                    </FieldSet>
+                    <FieldNumber value={progValue.value} normalize={Number} onChange={(value) => progOther.triggerChange({ ...progValue, value })}>
+                      {({ value, $field, $state, ...other }) => (
+                        <Wrapper>
+                          <Info label="dynamic_fields" data={value} open />
+                          <Info label="meta" data={other} />
+                          <Info label="$field" data={$field} />
+                          <Info label="$state" data={$state} />
+
+                          <FieldInput
+                            hasException={other.hasException}
+                            valid={other.valid}
+                            error={other.error}
+                            {...other.control}
+                          />
+                        </Wrapper>
+                      )}
+                    </FieldNumber>
+                  </Wrapper>
+                )}
+              </FieldSet>
+
+              <FieldSet name="dynamic_fields">
+                {({ value: dynamicFieldsValue, $field, $state, ...dynamicFieldsOther }) => (
+                  <Wrapper>
+                    <Info label="dynamic_fields" data={dynamicFieldsValue} open />
+                    <Info label="meta" data={dynamicFieldsOther} />
+                    <Info label="$field" data={$field} />
+                    <Info label="$state" data={$state} />
+
+                    {Object.keys(dynamicFieldsValue).sort().map((name) => ( // eslint-disable-line fp/no-mutating-methods
+                      <FieldString name={name} key={name}>
+                        {({ value, $state, $field, ...other }) => (
+                          <Wrapper>
+                            <Info label={name} data={value} open />
+                            <Info label="meta" data={other} />
+                            <Info label="$field" data={$field} />
+                            <Info label="$state" data={$state} />
+                            <FieldInput
+                              hasException={other.hasException}
+                              valid={other.valid}
+                              error={other.error}
+                              {...other.control}
+                            />
+                            <button type="button" onClick={() => dynamicFieldsOther.triggerChange(omit(dynamicFieldsValue, name))}>Remove</button>
+                          </Wrapper>
+                        )}
+                      </FieldString>
+                    ))}
+
+                    <button type="button" onClick={() => dynamicFieldsOther.triggerChange({ ...dynamicFieldsValue, [`dynamic_field_${Object.keys(dynamicFieldsValue).length}_${++counter}`]: String(counter) })}>Add new dynamic field</button>
+                  </Wrapper>
+                )}
+              </FieldSet>
 
               <FieldString name="main_radio" id="main_radio">
                 {({ value, $state, $field, ...other }) => (
