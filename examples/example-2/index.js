@@ -31,7 +31,8 @@ const initialValue = {
       value: 3
     },
     value: 5
-  }
+  },
+  array_fields_value_change: []
 };
 
 const DEBUG = false;
@@ -358,6 +359,72 @@ const ExampleBasicUsage = (props) => {
                   </Wrapper>
                 )}
               </FieldList>
+
+              <Field name="array_fields_value_change">
+                {({ control }) => (
+                  <FieldList {...control}>
+                    {({ value, $state, $field, ...listOther }) => (
+                      <Wrapper>
+                        <Info label="array_fields_value_change" data={value} open />
+                        <Info label="meta" data={listOther} />
+                        <Info label="$field" data={$field} />
+                        <Info label="$state" data={$state} />
+
+                        <ErrorBlock hasException={listOther.hasException} valid={listOther.valid} error={listOther.error} />
+
+                        {listOther.items.map((item, index) => (
+                          <FieldSet key={index} name={index}>
+                            {({ value, $state, $field, ...itemOther }) => (
+                              <Wrapper>
+                                <Info label={`array_fields_value_change[${index}]`} data={value} open />
+                                <Info label="meta" data={listOther} />
+                                <Info label="$field" data={$field} />
+                                <Info label="$state" data={$state} />
+
+                                <ErrorBlock hasException={itemOther.hasException} valid={itemOther.valid} error={itemOther.error} />
+
+                                <div>
+                                  <Field name="array_fields_value_change_item_number" format={(value) => isNaN(parseFloat(value)) ? '' : parseFloat(value)} normalize={(value) => isNaN(parseFloat(value)) ? undefined : parseFloat(value)} validate={required()}>
+                                    {({ control, value, valid, error, hasException, $state }) => (
+                                      <Wrapper>
+                                        <Info label={`array_fields_value_change[${index}].array_fields_value_change_item_number`} data={value} open />
+                                        <FieldInput hasException={hasException} valid={valid} error={error} type="number" {...control} />
+                                      </Wrapper>
+                                    )}
+                                  </Field>
+
+                                  <Field name="array_fields_value_change_item_txt">
+                                    {({ control, value, valid, error, hasException, $state }) => (
+                                      <Wrapper>
+                                        <Info label={`array_fields_value_change[${index}].array_fields_value_change_item_txt`} data={value} open />
+                                        <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
+                                      </Wrapper>
+                                    )}
+                                  </Field>
+
+                                  <Field name="counter">
+                                    {({ value }) => (
+                                      <Wrapper>
+                                        <Info label={`array_fields_value_change[${index}].array_fields_value_change_item_txt`} data={value} open />
+                                      </Wrapper>
+                                    )}
+                                  </Field>
+                                </div>
+
+                                <button type="button" onClick={() => listOther.removeItems(index)}>remove this</button>
+                              </Wrapper>
+                            )}
+                          </FieldSet>
+                        ))}
+                        <br />
+                        <button type="button" onClick={() => listOther.appendItems({ counter: listOther.items.length, array_fields_value_change_item_number: listOther.items.length || null, array_fields_value_change_item_txt: `param pam pam ${listOther.items.length}` })}>Add one</button>
+                      </Wrapper>
+                    )}
+                  </FieldList>
+                )}
+              </Field>
+
+
             </div>
             <div style={styles.columnReset} />
           </div>
