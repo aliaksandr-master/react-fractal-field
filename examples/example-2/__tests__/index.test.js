@@ -2,7 +2,7 @@
 import '../index';
 import { triggerChange, /*triggerInitialize, triggerFocus, triggerBlur, */triggerSubmit, /*triggerReset, */onError } from '../../../lib';
 
-test('example-2', () => {
+test('example-3', () => {
   triggerChange('main_radio', 'some-1');
   //triggerInitialize('main_radio');
   //triggerFocus('main_radio');

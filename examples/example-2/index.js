@@ -1,366 +1,370 @@
 /* eslint-disable react/prop-types, react/jsx-no-bind, react/no-array-index-key, jsx-a11y/label-has-for */
-import React, { Component } from 'react';
+import React from 'react';
 import { render } from 'react-dom';
-import isNumber from 'lodash/isNumber';
-import isNil from 'lodash/isNil';
-import isNaN from 'lodash/isNaN';
-import isPlainObject from 'lodash/isPlainObject';
-import ReactJson from 'react-json-view';
-import { Field, FieldSet, FieldList, FieldBoolean, FieldNumber, FieldString } from '../../lib/index';
-
+import omit from 'lodash/omit';
+import { FieldSet, FieldList, Field } from '../../lib/index';
+import { Wrapper, composeFilter, ErrorBlock, FieldCheckBox, FieldInput, FieldRadio, Info, numberGTE, patternFloat, priceAdd, priceRemove, required, toFixed, toFloat } from '../utils';
+import { triggerChange } from '../../lib';
 
 
 // filters
-const composeFilter = (...filters) => (value) => filters.reduce((result, filter) => filter(result), value);
+const initialValue = {
+  main_radio: 'some-1',
+  nested_fields: {
+    nested_field_bool: true,
+    nested_field_text: ''
+  },
+  dynamic_fields: {
 
-const priceRemove = (currency) => (value) => {
-  let tmp = value;
-
-  for (let i = 0; i < 10; i++) { // eslint-disable-line
-    tmp = String(value || '').replace(`${currency} `, '') || '';
-
-    if (tmp !== value) {
-      value = tmp;
-    } else {
-      return tmp;
+  },
+  value: 33,
+  price: 23,
+  array_fields: [
+    {
+      counter: 0,
+      array_fields_item_number: 0,
+      array_fields_item_text: 'param pam pam 0'
     }
+  ],
+  prog_value: {
+    inc: {
+      value: 3
+    },
+    value: 5
   }
-
-  return value;
 };
 
-const priceAdd = (currency) => (value) => {
-  return `${currency} ${String(priceRemove(currency)(value))}`;
+const DEBUG = false;
+
+let counter = 0;
+
+const styles = {
+  row: { padding: 20 },
+  column1: { float: 'left', width: '48%' },
+  column2: { float: 'right', width: '48%' },
+  columnReset: { clear: 'both' }
 };
 
-const toFloat = () => (value) => {
-  if (isNumber(value)) {
-    return value;
-  }
-
-  const number = parseFloat(String(value || ''));
-
-  if (isNaN(number)) {
-    return 0;
-  }
-
-  return number;
-};
-
-const toFixed = (accuracy) => (value) => {
-  if (isNumber(value)) {
-    return value.toFixed(accuracy);
-  }
-
-  throw new Error('invalid type!');
-};
-
-const defaults = (defaultValue, strict = true) => (value) => {
-  if (strict) {
-    if (value === undefined) {
-      return defaultValue;
-    }
-
-    return value;
-  }
-
-  if (isNil(value) || isNaN(value)) {
-    return defaultValue;
-  }
-
-  return value;
-};
-
-
-
-// validators
-const required = () => (value) => isNil(value) || isNaN(value) || value === '' ? 'required' : null;
-
-const numberGTE = (max) => (value) => isNumber(value) && value >= max ? null : `need to be > ${max}`;
-
-const patternFloat = () => (value) => /^\d+.?\d*$/.test(value) ? null : 'invalid format';
-
-
-const Wrapper = ({ children }) => (
-  <div style={{ border: '1px solid #aaa', padding: '10px', margin: '20px 0' }}>{children}</div>
-);
-
-
-// components
-const ErrorBlock = ({ children, valid, error, hasException, style = {} }) => {
-  valid = !error && valid;
-
+const ExampleBasicUsage = (props) => {
+  /*eslint-disable react/jsx-handler-names*/
   return (
-    <div>
-      <div style={{ background: !valid ? 'red' : 'green', padding: 2, minHeight: 20, ...style }}>
-        {children || (<div style={{ lineHeight: '20px', color: 'white', textAlign: 'center' }}>{!valid ? 'INVALID' : 'VALID'}</div>)}
-      </div>
-      {(error || hasException) && (
-        <div style={{ color: 'red' }}>
-          {hasException ? 'exception' : 'error'}: {error && (Array.isArray(error) ? error[0] : error)}
-        </div>
-      )}
-    </div>
-  );
-};
+    <FieldSet debug={DEBUG} initialValue={initialValue} {...props}>
+      {({ value, $state, $field, ...other }) => (
+        <form onSubmit={other.triggerSubmit}>
+          <ErrorBlock hasException={other.hasException} error={other.error} valid={other.valid} />
 
-const FieldRadio = ({ valid, error, hasException, children, ...props }) => (
-  <ErrorBlock error={error} valid={valid} hasException={hasException}>
-    <label>
-      <input {...props} type="radio" />
-      {children}
-    </label>
-  </ErrorBlock>
-);
-
-const FieldInput = ({ error, valid, hasException, ...props }) => (
-  <ErrorBlock error={error} valid={valid} hasException={hasException}>
-    <input type="text" {...props} />
-  </ErrorBlock>
-);
-
-const FieldCheckBox = ({ error, valid, children, hasException, ...props }) => (
-  <ErrorBlock error={error} valid={valid} hasException={hasException}>
-    <label>
-      <input {...props} type="checkbox" />
-      {children}
-    </label>
-  </ErrorBlock>
-);
-
-const ExampleBasicUsage = class ExampleBasicUsage extends Component {
-  constructor (...args) {
-    super(...args);
-
-    this.state = {
-    };
-  }
-
-  DDInfo (label, data, open = false) {
-    return (
-      <div>
-        <div><b>{label}</b></div>
-        <div style={{ paddingBottom: 20 }}>
-          {Array.isArray(data) || isPlainObject(data)
-            ? (
-              <ReactJson enableClipboard={false} collapsed={!open} name={false} src={data} />
-            ) : (
-              <div style={{ minHeight: 14 }}>
-                {data === undefined
-                  ? (
-                    <em>undefined</em>
-                  ) : (
-                    data === null
-                      ? (
-                        <em>null</em>
-                      ) : (
-                        isNaN(data)
-                          ? (
-                            <em>NaN</em>
-                          ) : (
-                            JSON.stringify(data)
-                          )
-                      )
-                  )
-                }
-              </div>
-            )
-          }
-        </div>
-      </div>
-    );
-  }
-
-  render () {
-    /*eslint-disable react/jsx-handler-names*/
-    return (
-      <FieldSet {...this.props}>
-        {({ value, $state, ...other }) => (
-          <form onSubmit={other.triggerSubmit}>
-            <ErrorBlock hasException={other.hasException} error={other.error} valid={other.valid} />
-
-            <div style={{ overflow: 'hidden' }}>
-              <div style={{ float: 'left', width: '48%' }}>
-                {this.DDInfo('FORM value', value, true)}
-              </div>
-              <div style={{ float: 'right', width: '48%' }}>
-                {this.DDInfo('FORM meta', other, true)}
-                {this.DDInfo('FORM $state', $state)}
-              </div>
+          <div style={styles.row}>
+            <div style={styles.column1}>
+              <Info label="FORM value" data={value} open />
             </div>
+            <div style={styles.column2}>
+              <Info label="FORM meta" data={other} open />
+              <Info label="FORM $state" data={$state} />
+              <Info label="FORM $field" data={$field} />
+            </div>
+            <div style={styles.columnReset} />
 
             <button type="button" onClick={other.triggerSubmit}>Submit!</button>
+          </div>
 
-            <div style={{ overflow: 'hidden', padding: 20 }}>
-              <div style={{ float: 'left', width: '48%' }}>
-                <FieldString name="main_radio" id="main_radio">
-                  {({ value, ...other }) => (
-                    <Wrapper>
-                      {this.DDInfo('[main_radio] 1 (related):', value)}
-                      <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
-                      <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
-                      <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
-                    </Wrapper>
-                  )}
-                </FieldString>
+          <div style={styles.row}>
+            <div style={styles.column1}>
+              <FieldSet name="prog_value">
+                {({ value: progValue, $field, $state, ...progOther }) => (
+                  <Wrapper>
+                    <Info label="dynamic_fields" data={progValue} open />
+                    <Info label="meta" data={progOther} />
+                    <Info label="$field" data={$field} />
+                    <Info label="$state" data={$state} />
 
-                <br />
-                <br />
+                    <button type="button" onClick={() => progOther.triggerChange({ inc: { value: progValue.inc.value + 1 }, value: progValue.value - 1 })}>Change Value!</button>
 
-                <FieldString name="main_radio" id="main_radio">
-                  {({ value, error, ...other }) => (
-                    <Wrapper>
-                      {this.DDInfo('[main_radio] 2 (related):', value)}
-                      <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
-                      <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
-                      <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
-                    </Wrapper>
-                  )}
-                </FieldString>
+                    <FieldSet name="inc">
+                      {({ value, $field, $state, ...other }) => (
+                        <Wrapper>
+                          <Info label="dynamic_fields" data={value} open />
+                          <Info label="meta" data={other} />
+                          <Info label="$field" data={$field} />
+                          <Info label="$state" data={$state} />
 
-                <br />
-                <br />
+                          <button type="button" onClick={() => other.triggerChange({ value: value.value + 5 })}>Change Value!</button>
 
-                <FieldSet name="nested_fields" validate={() => value && value.main_radio === 'some-1' ? undefined : 'main_radio must be "some-1" only!'}>
-                  {({ value, error, valid, hasException }) => (
-                    <Wrapper>
-                      {this.DDInfo('[nested_fields]:', value)}
+                          <Field value={value.value} normalize={Number} onChange={(value) => other.triggerChange({ value })}>
+                            {({ value, $field, $state, ...other }) => (
+                              <Wrapper>
+                                <Info label="dynamic_fields" data={value} open />
+                                <Info label="meta" data={other} />
+                                <Info label="$field" data={$field} />
+                                <Info label="$state" data={$state} />
 
-                      <ErrorBlock hasException={hasException} valid={valid} error={error} />
+                                <button type="button" onClick={() => other.triggerChange(value + 15)}>Change Value!</button>
 
-                      <div>
-                        <FieldString preferState name="nested_field_text">
-                          {({ control, value, hasException, ...other }) => (
-                            <Wrapper>
-                              {this.DDInfo('[nested_field_text]:', value)}
-                              <FieldInput hasException={hasException} valid={other.valid} error={other.error} {...control} />
-                            </Wrapper>
-                          )}
-                        </FieldString>
+                                <FieldInput
+                                  hasException={other.hasException}
+                                  valid={other.valid}
+                                  error={other.error}
+                                  {...other.control}
+                                />
+                              </Wrapper>
+                            )}
+                          </Field>
+                        </Wrapper>
+                      )}
+                    </FieldSet>
+                    <Field value={progValue.value} normalize={Number} onChange={(value) => progOther.triggerChange({ ...progValue, value })}>
+                      {({ value, $field, $state, ...other }) => (
+                        <Wrapper>
+                          <Info label="dynamic_fields" data={value} open />
+                          <Info label="meta" data={other} />
+                          <Info label="$field" data={$field} />
+                          <Info label="$state" data={$state} />
 
-                        <br />
-                        <br />
+                          <FieldInput
+                            hasException={other.hasException}
+                            valid={other.valid}
+                            error={other.error}
+                            {...other.control}
+                          />
+                        </Wrapper>
+                      )}
+                    </Field>
+                  </Wrapper>
+                )}
+              </FieldSet>
 
-                        <FieldBoolean name="nested_field_bool">
-                          {({ control, value, ...other }) => (
-                            <Wrapper>
-                              {this.DDInfo('[nested_field_bool]:', value)}
-                              <FieldCheckBox hasException={other.hasException} valid={other.valid} error={other.error} {...control} checked={Boolean(value)}>nested_field_bool</FieldCheckBox>
-                            </Wrapper>
-                          )}
-                        </FieldBoolean>
-                      </div>
-                    </Wrapper>
-                  )}
-                </FieldSet>
-              </div>
+              <FieldSet name="dynamic_fields">
+                {({ value: dynamicFieldsValue, $field, $state, ...dynamicFieldsOther }) => (
+                  <Wrapper>
+                    <Info label="dynamic_fields" data={dynamicFieldsValue} open />
+                    <Info label="meta" data={dynamicFieldsOther} />
+                    <Info label="$field" data={$field} />
+                    <Info label="$state" data={$state} />
 
-              <div style={{ float: 'right', width: '48%' }}>
-                <FieldNumber
-                  name="value"
-                  validate={[ required(), numberGTE(3) ]}
-                  normalize={toFloat()}
-                >
-                  {({ control, value, error, valid, hasException, $state }) => (
-                    <Wrapper>
-                      {this.DDInfo('[value]:', value)}
-                      <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
-                    </Wrapper>
-                  )}
-                </FieldNumber>
-
-                <br />
-                <br />
-
-                <FieldNumber
-                  name="price"
-                  validate={[ required(), numberGTE(3) ]}
-                >
-                  {({ triggerChange, hasException, valid, error, value }) => (
-                    <Wrapper>
-                      {this.DDInfo('price:', value)}
-                      <ErrorBlock hasException={hasException} valid={valid} error={error} />
-                      <FieldNumber
-                        preferState
-                        onChange={(value) => triggerChange(value)}
-                        validate={[ (value) => patternFloat()(priceRemove('USD')(value)) ]}
-                        normalize={composeFilter(priceRemove('USD'), toFloat())}
-                        format={composeFilter(toFixed(2), priceAdd('USD'))}
-                      >
-                        {({ control, value, error, valid, hasException, $state }) => (
+                    {Object.keys(dynamicFieldsValue).sort().map((name) => ( // eslint-disable-line fp/no-mutating-methods
+                      <Field name={name} key={name}>
+                        {({ value, $state, $field, ...other }) => (
                           <Wrapper>
-                            {this.DDInfo('price INNER:', value)}
-                            <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
+                            <Info label={name} data={value} open />
+                            <Info label="meta" data={other} />
+                            <Info label="$field" data={$field} />
+                            <Info label="$state" data={$state} />
+                            <FieldInput
+                              hasException={other.hasException}
+                              valid={other.valid}
+                              error={other.error}
+                              {...other.control}
+                            />
+                            <button type="button" onClick={() => dynamicFieldsOther.triggerChange(omit(dynamicFieldsValue, name))}>Remove</button>
                           </Wrapper>
                         )}
-                      </FieldNumber>
-                    </Wrapper>
-                  )}
-                </FieldNumber>
+                      </Field>
+                    ))}
 
-                <br />
-                <br />
+                    <button type="button" onClick={() => dynamicFieldsOther.triggerChange({ ...dynamicFieldsValue, [`dynamic_field_${Object.keys(dynamicFieldsValue).length}_${++counter}`]: String(counter) })}>Add new dynamic field</button>
+                  </Wrapper>
+                )}
+              </FieldSet>
 
-                <FieldList name="array_fields">
-                  {({ triggerChange, value, error, hasException, valid, $state, items, appendItems, removeItems }) => (
-                    <Wrapper>
-                      {this.DDInfo('[array_fields]:', value, true)}
+              <Field name="main_radio" id="main_radio">
+                {({ value, $state, $field, ...other }) => (
+                  <Wrapper>
+                    <Info label="[main_radio] 1 (related)" data={value} open />
+                    <Info label="meta" data={other} />
+                    <Info label="$field" data={$field} />
+                    <Info label="$state" data={$state} />
+                    <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
+                    <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
+                    <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
+                  </Wrapper>
+                )}
+              </Field>
 
-                      <ErrorBlock hasException={hasException} valid={valid} error={error} />
+              <br />
+              <br />
 
-                      {items.map((item, index) => (
-                        <FieldSet key={index} name={index}>
-                          {({ value, valid, error, hasException, $state }) => (
-                            <Wrapper>
-                              {this.DDInfo(`array_fields[${index}]:`, value, true)}
+              <Field name="main_radio" id="main_radio">
+                {({ value, $state, $field, ...other }) => (
+                  <Wrapper>
+                    <Info label="[main_radio] 2 (related)" data={value} open />
+                    <Info label="meta" data={other} />
+                    <Info label="$field" data={$field} />
+                    <Info label="$state" data={$state} />
+                    <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-1'} value="some-1">Some 1</FieldRadio>
+                    <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-2'} value="some-2">Some 2</FieldRadio>
+                    <FieldRadio hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} checked={other.control.value === 'some-3'} value="some-3">Some 3</FieldRadio>
+                  </Wrapper>
+                )}
+              </Field>
 
-                              <ErrorBlock hasException={hasException} valid={valid} error={error} />
+              <br />
+              <br />
 
-                              <div>
-                                <FieldNumber name="array_fields_item_number" format={(value) => isNaN(parseFloat(value)) ? '' : parseFloat(value)} normalize={(value) => isNaN(parseFloat(value)) ? undefined : parseFloat(value)} validate={required()}>
-                                  {({ control, value, valid, error, hasException, $state }) => (
-                                    <Wrapper>
-                                      {this.DDInfo(`array_fields[${index}].array_fields_item_number:`, value)}
-                                      <FieldInput hasException={hasException} valid={valid} error={error} type="number" {...control} />
-                                    </Wrapper>
-                                  )}
-                                </FieldNumber>
+              <FieldSet name="nested_fields" validate={() => value && value.main_radio === 'some-1' ? undefined : 'main_radio must be "some-1" only!'}>
+                {({ value, $state, $field, ...other }) => (
+                  <Wrapper>
+                    <Info label="[nested_fields]" data={value} open />
+                    <Info label="meta" data={other} />
+                    <Info label="$field" data={$field} />
+                    <Info label="$state" data={$state} />
 
-                                <FieldString name="array_fields_item_text">
-                                  {({ control, value, valid, error, hasException, $state }) => (
-                                    <Wrapper>
-                                      {this.DDInfo(`array_fields[${index}].array_fields_item_text:`, value)}
-                                      <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
-                                    </Wrapper>
-                                  )}
-                                </FieldString>
+                    <ErrorBlock hasException={other.hasException} valid={other.valid} error={other.error} />
 
-                                <FieldNumber name="counter">
-                                  {({ control, value, valid, error, hasException, $state }) => (
-                                    <Wrapper>
-                                      {this.DDInfo(`array_fields[${index}].array_fields_item_text:`, value)}
-                                    </Wrapper>
-                                  )}
-                                </FieldNumber>
-                              </div>
+                    <div>
+                      <Field postponeInvalid name="nested_field_text">
+                        {({ $state, $field, value, ...other }) => (
+                          <Wrapper>
+                            <Info label="[nested_field_text]" data={value} open />
+                            <Info label="meta" data={other} />
+                            <Info label="$field" data={$field} />
+                            <Info label="$state" data={$state} />
+                            <FieldInput hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} />
+                          </Wrapper>
+                        )}
+                      </Field>
 
-                              <button type="button" onClick={() => removeItems(index)}>remove this</button>
-                            </Wrapper>
-                          )}
-                        </FieldSet>
-                      ))}
                       <br />
-                      <button type="button" onClick={() => appendItems({ counter: items.length, array_fields_item_number: items.length || undefined, array_fields_item_text: `param pam pam ${items.length}` })}>Add one</button>
-                    </Wrapper>
-                  )}
-                </FieldList>
-              </div>
+                      <br />
+
+                      <Field name="nested_field_bool">
+                        {({ control, value, ...other }) => (
+                          <Wrapper>
+                            <Info label="[nested_field_bool]" data={value} open />
+                            <Info label="meta" data={other} />
+                            <Info label="$field" data={$field} />
+                            <Info label="$state" data={$state} />
+                            <FieldCheckBox hasException={other.hasException} valid={other.valid} error={other.error} {...control} checked={Boolean(value)}>nested_field_bool</FieldCheckBox>
+                          </Wrapper>
+                        )}
+                      </Field>
+                    </div>
+                  </Wrapper>
+                )}
+              </FieldSet>
             </div>
-          </form>
-        )}
-      </FieldSet>
-    );
-  }
+
+            <div style={styles.column2}>
+              <Field
+                name="value"
+                validate={[ required(), numberGTE(3) ]}
+                normalize={toFloat()}
+              >
+                {({ value, $state, $field, ...other }) => (
+                  <Wrapper>
+                    <Info label="[value]" data={value} open />
+                    <Info label="meta" data={other} />
+                    <Info label="$field" data={$field} />
+                    <Info label="$state" data={$state} />
+                    <FieldInput hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} />
+                  </Wrapper>
+                )}
+              </Field>
+
+              <br />
+              <br />
+
+              <Field
+                name="price"
+                validate={[ required(), numberGTE(3) ]}
+              >
+                {({ $state, $field, value, ...other }) => (
+                  <Wrapper>
+                    <Info label="price" data={value} open />
+                    <Info label="meta" data={other} />
+                    <Info label="$field" data={$field} />
+                    <Info label="$state" data={$state} />
+                    <ErrorBlock hasException={other.hasException} valid={other.valid} error={other.error} />
+
+                    <Field
+                      value={String(value)}
+                      onChange={(val) => other.triggerChange(toFloat()(val))}
+                      postponeInvalid
+                      validate={patternFloat()}
+                      normalize={priceRemove('USD')}
+                      format={priceAdd('USD')}
+                    >
+                      {({ value, $state, $field, ...other }) => (
+                        <Wrapper>
+                          <Info label="price (INNER)" data={value} open />
+                          <Info label="meta" data={other} />
+                          <Info label="$field" data={$field} />
+                          <Info label="$state" data={$state} />
+                          <FieldInput hasException={other.hasException} valid={other.valid} error={other.error} {...other.control} />
+                        </Wrapper>
+                      )}
+                    </Field>
+                  </Wrapper>
+                )}
+              </Field>
+
+              <br />
+              <br />
+
+              <FieldList name="array_fields">
+                {({ value, $state, $field, ...listOther }) => (
+                  <Wrapper>
+                    <Info label="array_fields" data={value} open />
+                    <Info label="meta" data={listOther} />
+                    <Info label="$field" data={$field} />
+                    <Info label="$state" data={$state} />
+
+                    <ErrorBlock hasException={listOther.hasException} valid={listOther.valid} error={listOther.error} />
+
+                    {listOther.items.map((item, index) => (
+                      <FieldSet key={index} name={index}>
+                        {({ value, $state, $field, ...itemOther }) => (
+                          <Wrapper>
+                            <Info label={`array_fields[${index}]`} data={value} open />
+                            <Info label="meta" data={listOther} />
+                            <Info label="$field" data={$field} />
+                            <Info label="$state" data={$state} />
+
+                            <ErrorBlock hasException={itemOther.hasException} valid={itemOther.valid} error={itemOther.error} />
+
+                            <div>
+                              <Field name="array_fields_item_number" format={(value) => isNaN(parseFloat(value)) ? '' : parseFloat(value)} normalize={(value) => isNaN(parseFloat(value)) ? undefined : parseFloat(value)} validate={required()}>
+                                {({ control, value, valid, error, hasException, $state }) => (
+                                  <Wrapper>
+                                    <Info label={`array_fields[${index}].array_fields_item_number`} data={value} open />
+                                    <FieldInput hasException={hasException} valid={valid} error={error} type="number" {...control} />
+                                  </Wrapper>
+                                )}
+                              </Field>
+
+                              <Field name="array_fields_item_text">
+                                {({ control, value, valid, error, hasException, $state }) => (
+                                  <Wrapper>
+                                    <Info label={`array_fields[${index}].array_fields_item_text`} data={value} open />
+                                    <FieldInput hasException={hasException} valid={valid} error={error} {...control} />
+                                  </Wrapper>
+                                )}
+                              </Field>
+
+                              <Field name="counter">
+                                {({ value }) => (
+                                  <Wrapper>
+                                    <Info label={`array_fields[${index}].array_fields_item_text`} data={value} open />
+                                  </Wrapper>
+                                )}
+                              </Field>
+                            </div>
+
+                            <button type="button" onClick={() => listOther.removeItems(index)}>remove this</button>
+                          </Wrapper>
+                        )}
+                      </FieldSet>
+                    ))}
+                    <br />
+                    <button type="button" onClick={() => listOther.appendItems({ counter: listOther.items.length, array_fields_item_number: listOther.items.length || undefined, array_fields_item_text: `param pam pam ${listOther.items.length}` })}>Add one</button>
+                  </Wrapper>
+                )}
+              </FieldList>
+            </div>
+            <div style={styles.columnReset} />
+          </div>
+        </form>
+      )}
+    </FieldSet>
+  );
 };
 
 const el = window.document.createElement('div');
