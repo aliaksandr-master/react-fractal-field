@@ -13,74 +13,90 @@ $ npm install prop-types lodash react react-fractal-field --save
 ## Usage
 
 ```javascript
-import FractalField from 'react-fractal-field';
+import { Field, FieldSet } from 'react-fractal-field';
 
 const MyComponent = ({ onSubmit }) => (
-  <div>
-    <FractalField onSubmit={onSubmit} isolated>
-      {({ triggerSubmit }) => (
-        <div>
-          <FractalField name="value">
-            {({ control }) => (
-              <div>
-                <input {...control} type="text" />
-              </div>
-            )}
-          </FractalField>
-          <button onClick={triggerSubmit}>Submit</button>
-        </div>
-      )}
-    </FractalField>  
-  </div>
+  <FieldSet onSubmit={onSubmit} isolated>
+    {({ triggerSubmit }) => (
+      <div>
+        <Field name="value">
+          {({ control }) => (
+            <div>
+              <input {...control} type="text" />
+            </div>
+          )}
+        </Field>
+        <button onClick={triggerSubmit}>Submit</button>
+      </div>
+    )}
+  </FieldSet>
 )
 ```
 
 ## API
 
-### FractalField `props`
+### common FieldSet/FieldList/Field `props`:
+- `id`: [ String, Number ] - ID used for remote controlling this field/form (`null` by default)
+- `softTypes`: [ Boolean ] - disable type checking. HIGHLY NOT RECOMMENDED!
+- `isolated`: [ Boolean ] - if true meta/value stopped from sharing between parent
+- `name`: [ String, Number ] - need for value binding
+- `value`: [String, Boolean, Number, Array, Object, Null]
+- `initialValue`: [String, Boolean, Number, Array, Object, Null] - values that will be provided for child fields (useful only for forms)
+- `onChange`: [ Function ] - handler that will be called on every field value changes
+- `onValueChange`: [ Function ] - handler that will be called on every field changes
+- `validate`: [ Function ] - validation function/array . if error it need to return the error-message string
+- `onChangeValidity`: [ Function ]
+- `postponeInvalid`: [ Boolean ]
+- `form`: [ Boolean ]
+- `onSubmit`: [ Function ] - handler that will be called on `triggerSubmit` only in valid form state
+- `exceptionMessage`: [ Any ] - error message in case validate/normalize/format throws the error
+- `children`: [ Function ] - obviously, content of field/form
+- `autoClean`: [ Boolean ]
+- `debug`: [ Boolean ]
 
-- `id`: PropTypes.string - ID used for remote controlling this field/form (`null` by default)
-- `pure`: PropTypes.bool - flag for optimize the re-rendering it depends only from state of form
-- `reinitialize`: PropTypes.bool - set `true` if you need reset value when initialValue are update (`false` by default)
-- `name`: PropTypes.string - need for data binding
-- `children`: PropTypes.oneOfType([ PropTypes.node, PropTypes.func ]).isRequired, - obviously, content of field/form
-- `strictTypes`: PropTypes.bool - insert checking of types (`true` by default)
-- `initialValue`: PropTypes.any - values that will be provided for child fields (useful only for forms)
-- `exception`: PropTypes.string - error message in case validate/normalize/format throws the error
-- `singleSubmit`: PropTypes.bool - reject the submtiing if first submit are active yet (promise has pending state)
+### Field `props`: 
+- `normalize`: [ Function ] - filter value before call onChange/onSubmit/validate callback 
+- `format`: [ Function ] - filter value before rendering (or set value to child field). from outer format to inner format
 
 
-- `onChange`: PropTypes.func - handler that will be called on every field changes
-- `onSubmit`: PropTypes.func - handler that will be called on `triggerSubmit` only in valid form state
-- `normalize`: PropTypes.func - filter value before call onChange/onSubmit/validate callback 
-- `format`: PropTypes.func - filter value before rendering (or set value to child field). from outer format to inner format
-- `validate`: PropTypes.oneOfType([ PropTypes.arrayOf(PropTypes.func), PropTypes.func ]) - validation function/array . if error it need to return the error-message string
-- `preFormat`: PropTypes.func - filter value before rendering (or set value to child field). from inner format to control format (rare useful, but it need sometimes)
-- `preNormalize`: PropTypes.func - filter value before set/validate/broadcast onChange middle value. from control value format to inner value format
-- `preValidate`: PropTypes.oneOfType([ PropTypes.arrayOf(PropTypes.func), PropTypes.func ]) - validate value before change broadcasting to parent. checks only inner value format
+### Common FieldSet/FieldList/Field children function `params`:
+- `triggerChange`: [ Function ] - call when you want to trigger change field by some case
+- `triggerReset`: [ Function ] - call when you want to trigger submit, obvious
+- `value`: [ Any ]
+- `touched`: [ Boolean ] - true when field or some child field was changed once
+- `pristine`: [ Boolean ] - true when field or some child field was not changed once
+- `submitted`: [ Boolean ] - when this form/field of parent was submitted once
+- `valid`: [ Boolean ] - true if children and this field has no errors
+- `invalid`: [ Boolean ] - true if children and this field/children has errors
+- `hasException`: [ Boolean ] - true if children and this field/children has exceptions
+- `error`: [ Any ] - first error are not false, that returned from validate function
+- `invalidChildren`: [ Array ] - ids of closest children with errors
+- `active`: [ Boolean ] - true if field/children is focusing right now
+- `activated`: [ Boolean ] - true if field/children was focused once
+- `form`: [ Object ] - Props of closest isolated form (or field itself)
 
-
-### Control (children) `params`
-
-- `control: { value, onChange }` - shortcut for putting it into control component (only for components without children fractal-fields)
-- `triggerSubmit` - Function - call when you want to trigger submit, obvious
-- `triggerChange` - Function - call when you want to trigger change field by some case
-- `triggerReset` - Function - call when you want to trigger submit, obvious
-- `submitSuccess` - Boolean - state of submitting 
-- `submitFailed` - Boolean - state of submitting
-- `submitting` - Boolean - state of submit processing. in pending (if onSubmit returns the Promise object)
+### Common FieldSet/FieldList/Field children function `params` when `props.form` is true:
+- `triggerSubmit`: [ Function ] - call when you want to trigger submit, obvious
+- `submitSuccess`: [ Boolean ] - state of submitting 
+- `submitFailed`: [ Boolean ] - state of submitting
+- `submitting`: [ Boolean ] - state of submit processing. in pending (if onSubmit returns the Promise object)
+- `submitted`: [ Boolean ] - true if form was submitted once
+- `submittedTimes`: [ Number ] - count of `triggerSubmit` calling 
 - `submitErrors` - Any - payload of submitting
-- `value` - Any
-- `touched` - Boolean - when form/field or child field was changed once
-- `submitted` - Boolean - when this form/field of parent was submitted once
-- `valid` - Boolean - true if children and this field/form has no local/foreign errors
-- `error` - String - shortcut for local/foreign error
+
+### Field children function `params`
+- `control: { value, onChange, onBlur, onFocus }` - shortcut for putting it into control component (only for components without children fractal-fields)
+
+### FieldList children function `params`:
+- `removeItems`: [ Function ]
+- `appendItems`: [ Function ]
+- `prependItems`: [ Function ]
+- `items`: [ Array ]
+
 
 
 ### Remote api
 
-- `reset(id)`
-- `submit(id)` 
-- `change(id, name, value)` 
-- `initialize(id, value)` 
+- `triggerSubmit(id)`
+- `triggerChange(id)` 
 - `onError(callback)`
