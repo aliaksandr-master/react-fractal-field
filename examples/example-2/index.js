@@ -300,7 +300,7 @@ const ExampleBasicUsage = (props) => {
               <br />
               <br />
 
-              <FieldList name="array_fields">
+              <FieldList name="array_fields" debug>
                 {({ value, $state, $field, ...listOther }) => (
                   <Wrapper>
                     <Info label="array_fields" data={value} open />
@@ -349,13 +349,41 @@ const ExampleBasicUsage = (props) => {
                               </Field>
                             </div>
 
-                            <button type="button" onClick={() => listOther.removeItems(index)}>remove this</button>
+                            <button
+                              type="button"
+                              onClick={() => listOther.removeItems(index)}
+                            >
+                              remove this
+                            </button>
                           </Wrapper>
                         )}
                       </FieldSet>
                     ))}
                     <br />
-                    <button type="button" onClick={() => listOther.appendItems({ counter: listOther.items.length, array_fields_item_number: listOther.items.length || undefined, array_fields_item_text: `param pam pam ${listOther.items.length}` })}>Add one</button>
+
+                    <button
+                      type="button"
+                      onClick={() =>
+                        listOther.appendItems({
+                          counter: listOther.items.length,
+                          array_fields_item_number: listOther.items.length || null,
+                          array_fields_item_text: `param pam pam ${listOther.items.length}`
+                        })
+                      }
+                    >
+                      Add one
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        console.log(listOther.items);
+
+                        listOther.removeItems(...listOther.items.map((_1, index) => index));
+                      }}
+                    >
+                      Delete All
+                    </button>
                   </Wrapper>
                 )}
               </FieldList>
