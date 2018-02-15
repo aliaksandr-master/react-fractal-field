@@ -300,7 +300,7 @@ const ExampleBasicUsage = (props) => {
               <br />
               <br />
 
-              <FieldList name="array_fields" debug>
+              <FieldList name="array_fields">
                 {({ value, $state, $field, ...listOther }) => (
                   <Wrapper>
                     <Info label="array_fields" data={value} open />
