@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`submitDoneReducer 1`] = `Object {}`;
+
+exports[`submitDoneReducer 2`] = `
+Object {
+  "123": Object {
+    "autoClean": false,
+    "children": Array [],
+    "complexValueType": null,
+    "id": 123,
+    "meta": Object {
+      "activated": false,
+      "active": false,
+      "error": null,
+      "errorsIn": Array [],
+      "hasException": false,
+      "hasFormatException": false,
+      "hasNormalizeException": false,
+      "hasValidateException": false,
+      "submitFailed": false,
+      "submitSuccess": true,
+      "submitted": true,
+      "submittedTimes": 1,
+      "submitting": false,
+      "touched": false,
+      "valid": true,
+    },
+    "metaVersion": 1,
+    "name": null,
+    "parentID": null,
+    "shareMeta": true,
+    "shareValue": true,
+    "value": undefined,
+    "valueVersion": 0,
+    "version": 1,
+  },
+}
+`;

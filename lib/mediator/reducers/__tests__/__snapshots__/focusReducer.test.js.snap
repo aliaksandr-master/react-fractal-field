@@ -1,0 +1,39 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`focusReducer 1`] = `Object {}`;
+
+exports[`focusReducer 2`] = `
+Object {
+  "123": Object {
+    "autoClean": false,
+    "children": Array [],
+    "complexValueType": null,
+    "id": 123,
+    "meta": Object {
+      "activated": true,
+      "active": true,
+      "error": null,
+      "errorsIn": Array [],
+      "hasException": false,
+      "hasFormatException": false,
+      "hasNormalizeException": false,
+      "hasValidateException": false,
+      "submitFailed": false,
+      "submitSuccess": false,
+      "submitted": false,
+      "submittedTimes": 0,
+      "submitting": false,
+      "touched": false,
+      "valid": true,
+    },
+    "metaVersion": 1,
+    "name": null,
+    "parentID": null,
+    "shareMeta": true,
+    "shareValue": true,
+    "value": undefined,
+    "valueVersion": 0,
+    "version": 1,
+  },
+}
+`;

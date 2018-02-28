@@ -1,0 +1,75 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`submitStartReducer 1`] = `Object {}`;
+
+exports[`submitStartReducer 2`] = `
+Object {
+  "123": Object {
+    "autoClean": false,
+    "children": Array [],
+    "complexValueType": null,
+    "id": 123,
+    "meta": Object {
+      "activated": false,
+      "active": false,
+      "error": null,
+      "errorsIn": Array [],
+      "hasException": false,
+      "hasFormatException": false,
+      "hasNormalizeException": false,
+      "hasValidateException": false,
+      "submitFailed": false,
+      "submitSuccess": false,
+      "submitted": false,
+      "submittedTimes": 0,
+      "submitting": true,
+      "touched": false,
+      "valid": true,
+    },
+    "metaVersion": 1,
+    "name": null,
+    "parentID": null,
+    "shareMeta": true,
+    "shareValue": true,
+    "value": undefined,
+    "valueVersion": 0,
+    "version": 1,
+  },
+}
+`;
+
+exports[`submitStartReducer 3`] = `
+Object {
+  "123": Object {
+    "autoClean": false,
+    "children": Array [],
+    "complexValueType": null,
+    "id": 123,
+    "meta": Object {
+      "activated": false,
+      "active": false,
+      "error": null,
+      "errorsIn": Array [],
+      "hasException": false,
+      "hasFormatException": false,
+      "hasNormalizeException": false,
+      "hasValidateException": false,
+      "submitFailed": false,
+      "submitSuccess": false,
+      "submitted": false,
+      "submittedTimes": 0,
+      "submitting": true,
+      "touched": false,
+      "valid": true,
+    },
+    "metaVersion": 0,
+    "name": null,
+    "parentID": null,
+    "shareMeta": true,
+    "shareValue": true,
+    "value": undefined,
+    "valueVersion": 0,
+    "version": 0,
+  },
+}
+`;

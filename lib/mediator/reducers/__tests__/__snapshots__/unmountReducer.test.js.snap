@@ -1,0 +1,43 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`unmountReducer 1`] = `Object {}`;
+
+exports[`unmountReducer 2`] = `Object {}`;
+
+exports[`unmountReducer 3`] = `
+Object {
+  "123": Object {
+    "autoClean": false,
+    "children": Array [],
+    "complexValueType": "object",
+    "id": 123,
+    "meta": Object {
+      "activated": false,
+      "active": false,
+      "error": null,
+      "errorsIn": Array [],
+      "hasException": false,
+      "hasFormatException": false,
+      "hasNormalizeException": false,
+      "hasValidateException": false,
+      "submitFailed": false,
+      "submitSuccess": false,
+      "submitted": false,
+      "submittedTimes": 0,
+      "submitting": false,
+      "touched": false,
+      "valid": true,
+    },
+    "metaVersion": 0,
+    "name": null,
+    "parentID": null,
+    "shareMeta": true,
+    "shareValue": true,
+    "value": Object {
+      "123": 234,
+    },
+    "valueVersion": 0,
+    "version": 1,
+  },
+}
+`;
