@@ -4,7 +4,7 @@ import { render } from 'react-dom';
 import omit from 'lodash/omit';
 import { FieldSet, FieldList, Field } from '../../lib/index';
 import { Wrapper, composeFilter, ErrorBlock, FieldCheckBox, FieldInput, FieldRadio, Info, numberGTE, patternFloat, priceAdd, priceRemove, required, toFixed, toFloat } from '../utils';
-import { triggerChange } from '../../lib';
+import { triggerReset } from '../../lib';
 
 
 // filters
@@ -46,10 +46,12 @@ const styles = {
   columnReset: { clear: 'both' }
 };
 
+const FORM_ID = 'FORM';
+
 const ExampleBasicUsage = (props) => {
   /*eslint-disable react/jsx-handler-names*/
   return (
-    <FieldSet debug={DEBUG} initialValue={initialValue} {...props}>
+    <FieldSet id={FORM_ID} debug={DEBUG} initialValue={initialValue} {...props}>
       {({ value, $state, $field, ...other }) => (
         <form onSubmit={other.triggerSubmit}>
           <ErrorBlock hasException={other.hasException} error={other.error} valid={other.valid} />
@@ -66,6 +68,8 @@ const ExampleBasicUsage = (props) => {
             <div style={styles.columnReset} />
 
             <button type="button" onClick={other.triggerSubmit}>Submit!</button>
+
+            <button type="button" onClick={() => triggerReset(FORM_ID)}>Reset!</button>
           </div>
 
           <div style={styles.row}>

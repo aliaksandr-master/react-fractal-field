@@ -26,14 +26,14 @@ Object {
       "touched": false,
       "valid": true,
     },
-    "metaVersion": 0,
+    "metaVersion": 1,
     "name": null,
     "parentID": null,
     "shareMeta": true,
     "shareValue": true,
     "value": undefined,
     "valueVersion": 0,
-    "version": 0,
+    "version": 1,
   },
 }
 `;
