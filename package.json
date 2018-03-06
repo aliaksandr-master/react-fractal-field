@@ -1,6 +1,6 @@
 {
   "name": "react-fractal-field",
-  "version": "3.10.0",
+  "version": "3.10.1",
   "description": "predictable react router",
   "main": "lib/index.js",
   "scripts": {
