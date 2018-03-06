@@ -249,6 +249,7 @@ const ExampleBasicUsage = (props) => {
 
             <div style={styles.column2}>
               <Field
+                fresh
                 name="value"
                 validate={[ required(), numberGTE(3) ]}
                 normalize={toFloat()}
@@ -381,8 +382,6 @@ const ExampleBasicUsage = (props) => {
                     <button
                       type="button"
                       onClick={() => {
-                        console.log(listOther.items);
-
                         listOther.removeItems(...listOther.items.map((_1, index) => index));
                       }}
                     >
